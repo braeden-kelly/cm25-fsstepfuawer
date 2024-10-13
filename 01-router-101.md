@@ -146,32 +146,46 @@ Head over to your browser, and make the window wide. Now open an artwork. Real "
 
 This will make this screen present like a transparent modal, but it will not look very obvious until we shrink the size of the content, so the transparent area will show up underneath it.
 
-2. Add the file **utils/useMediaQuery.ts** and put this code inside:
+Let's use Nativewind's _breakpoint selectors_ to adjust the window size. If you're not used to Nativewind or Tailwind, that's OK. We're just going to do a very little bit to get a taste of it.
+
+Nativewind works by letting you use a standard set of descriptive CSS classes to style components. You put these in the `className` prop instead of `style`. What's neat about it is that your styling code looks completely the same across React Web and React Native.
+
+_Selectors_ let you put something in front of one of these classes that says it only applies in certain scenarios. So, `sm:bg-black` means, "only set the background to black when the width is greater than the "small" size breakpoint (>640 device pixels)". Nativewind syntax defaults to "mobile" size. You only use selectors when targeting larger screens.
+
+3. Let's update the top-level `View` in **[workId].tsx** so it is centered and only takes up some of the screen when the screen is wider, so we can see our modal effect in action.
+
+```diff
+- <View className="bg-shade-1 flex-1">
++ <View className="bg-shade-1 flex-1 sm:my-20 sm:w-3/4 sm:self-center">
+```
+
+🏃**Try it.** Open an artwork and change the screen size. It should show the modal when the screen is wider, but look like a pretty typical mobile full screen view otherwise.
+
+4. However, it doesn't look like a very compelling modal because the background behind it doesn't change. Let's add some shade by wrapping everything in **[workId].tsx** in another view that adds said shade:
+```diff
+<View className="flex-1 bg-opacity-50 bg-black justify-center">
++  <View className=" bg-shade-1 flex-1 sm:my-20 sm:w-3/4 sm:self-center">
+   /* everything else */
++  </View>
+</View>
+```
+
+### How would I do this without Nativewind?
+There's some fancy media query hooks for React Native that give you programatic access to breakpoints, which you can then use inline in `style`. It's also pretty straightforward to roll your own:
+
 ```ts
 import { useWindowDimensions } from 'react-native';
 
 export function useMediaQuery() {
-  const { width, height } = useWindowDimensions();
-  return { isLandscape: width > height };
+  const { width } = useWindowDimensions();
+  return { 
+    isSm: width >= 640,
+    isMd: width >= 768, 
+    isLg: width >= 1024, 
+    isXl: width >= 1280 
+  };
 }
 ```
-
-You could of course use more sophisticated breakpoints, but one of the simplest things we can do to be responsive is to account for a landscape orientation, so we'll start there.
-
-Back in **[workId].tsx**, let's wrap the screen in some views that account for landscape orientation and add some vertical / horizontal space with some shade to give us the desired modal effect.
-
-4. Reference the hook in **[workId].tsx**:
-
-```tsx
-const { isLandscape } = useMediaQuery();
-```
-
-5. Wrap the entire contents of the screen in these views:
-```tsx
- // TBD: re-writing this in not-nativewind
-```
-
-🏃**Try it.** Open an artwork and change the screen size. It should show the modal when the screen is wider, but look like a pretty typical mobile full screen view otherwise.
 
 ## Bonus
 - Hide the tab bar on mobile when navigating to an exhibit.
