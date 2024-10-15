@@ -5,8 +5,8 @@
 Add a backend to your Expo Router project that can handle authentication and storing user data, and prevent users from accessing protected routes if they're not authenticated.
 
 ### Concepts
-- Protected routes: checking for conditions within the main app layout to determine if the user is allowed to access that area of the app, and redirect them to a login screen if they are not.
 - API routes: integrate a RESTful API backend right into your Expo Router project.
+- Protected routes: checking for conditions within the main app layout to determine if the user is allowed to access that area of the app, and redirect them to a login screen if they are not.
 
 ### Tasks
 - Finish wiring up the API route that reads and writes favorite status to artworks
@@ -16,81 +16,180 @@ Add a backend to your Expo Router project that can handle authentication and sto
 
 # Exercises
 
-## Exercise 1: Add the "Visitors info" screen
-<img src="./assets/01/add-modal.gif" alt="animated" width="200"/>
-Let's add a screen- a simple static route that opens a screen with info about visiting the museum. There's already a button in the navbar. We just need to add the screen.
+## Exercise 1. Add the `api/works/[workId]/fav` API route
 
-### What happens you navigate to a route that doesn't exist?
-**Try out the button in the navbar.** What happens?
+API routes fit right into the Expo Router folder structure, matching their URL's using the same rules as client-side pages. So, route groups, dynamic routes, etc. apply to API routes.
 
-This could have been an error, but instead, Expo Router serves a fallback to an unmatched route from the **+not-found.tsx** file.
+An API route is defined by **+api** in the filename. API routes implement GET, POST, etc. functions. So, if you have a `GET` function in **app/api/works/[workId]/fav+api.ts**, you can go to `http://localhost:8081/api/works/[workId]/fav` in your browser and get a result.
 
-<!-- TODO: unmatched route syntax in template doesn't match docs, investigate: https://docs.expo.dev/router/error-handling/#unmatched-routes -->
+> [!TIP]
+> Even though you could put API routes right next to frontend routes, we recommend having a top-level **api** folder, so you don't have to worry about breaking your backend while reorganizing your frontend routes.
 
-### Add the missing route
-The URL for the Visit screen will be `/visit`, so we need to add a file called **visit.tsx** to the root navigation folder (**/app**).
+### Add the GET request
 
-1. The new screen is premade for you in the **new-screens** folder. Copy **visit.tsx** to **app**.
-2. **Try it**: Press the button in the navbar. Does the screen appear?
+1. Let's add **app/api/works/[workId]/fav+api.ts** with that GET function:
 
-## Exercise 2: Add the "Favorites" tab.
-It'll be pretty empty for now, but let's add a second tab that will eventually fill up with our "favorite" artwork, the stuff we want to see when we visit the museum.
+```ts
+import { Database } from '@/data/api/database';
 
-Tabs aren't like your typical routes. Instead of pushing screens on top of each other with links (the default "stack" arrangement), they arrange themselves in a group where each tab can be accessed via a button in a bar. How does Expo Router know to arrange screens as tabs instead of a stack?
+export async function GET(request : Request, { workId }: Record<string, string>) {
+  // read the favorites status from our database
+  const database = new Database();
+  const favStatus = await database.getFavoriteStatus(workId);
+  // make a json response
+  return Response.json(favStatus);
+}
+```
+Don't sweat what the "database" is right now, the key lesson here is reading the request, doing something withit, and returning a response. If you look at it, you'll probably be horrified, as it's just a bunch of text files.
 
-Two concepts make this happen:
-- **route groups**: The parenthesis around `(tabs)` indicate that it's a route group. It's a way to indicate a relationship between routes without putting them in a folder that shows up as a segment of the URL.
-- **layout files**: Each folder/group can have a **_layout.tsx** file. This is not its own route, but it is executed whenever the user navigates to a route inside the folder. It can define special rules about how to display the screens in the folder, code to execute prior to displaying the screen, etc.
+🏃**Try it.**
+```
+http://localhost:8081/api/works/92937/fav
+```
+in your browser. We can't write any favorites status yet, so you should get false. But... you should get something!
 
-In **app/(tabs)/_layout.tsx**, a tabs layout is defined and returned. This means that all the screens inside **(tabs)** will appear as tabs in the tab bar.
+### Add the POST request
 
-**Already see the tab?** If you're on the desktop web version, you might already see a favorites icon in the top left. I hastily-added a responsive layout that bypasses the tab bar. Shrink your window horizontally until you don't see that anymore, and this'll make more sense.
+2. Now, add the POST function to the same file:
+```ts
+export async function POST(request : Request, { workId }: Record<string, string>) {
+  // read the body for the payload
+  const body = await request.json();
+  const status = body.status;
+  // write the updated status to our database
+  const database = new Database(request.headers.get('authToken'));
+  await database.setFavoriteStatus(workId, status);
+  // make a json response
+  return Response.json(status);
+}
+```
 
-### Adding the tab
-1. The new tab is premade for you in the **new-screens** folder. Copy **new-screens/(tabs)/two.tsx** to **app/(tabs)**.
-2. **Try it out**: You should see a second tab and be able to navigate to it.
+You could test this out right now with something like Postman, but we're about to write up GET and POST in the next exercise.
 
-But... it's not named favorites, and the icon doesn't look right. Let's fix that.
+## Exercise 2. Call the API route (GET and POST) from your client code
+The favorite button on a work of art (the star icon) doesn't do anything yet, but there are placeholders already for reading and writing favorites status when a work is rendered.
 
-### Sprucing up that tab
-We can use the layout file to add information about how to display the new tab, including what icon to show.
+To keep this clean, these queries are encapsulated in their own custom hooks in **/app/(app)/works/[workId]/index.tsx**, which wrap Tanstack query calls:
+```tsx
+ // query art API for the work
+  const workQuery = useWorkByIdQuery(id);
+  const work = workQuery.data;
 
-Update **app/(tabs)/_layout.tsx** to define properties for the new tab:
-```diff _layout.tsx
-/>
-+  <Tabs.Screen
-+    name="two"
-+    options={{
-+      title: "Favorites",
-+      tabBarIcon: ({ color }) => (
-+        <TabBarIcon type="FontAwesome" name="star" color={color} />
-+     ),
-+    }}
-+  />
-</Tabs>
+  // read fav status
+  const favQuery = useFavStatusQuery(id);
+  const isFav = favQuery.data;
+```
+
+Follow `useFavStatusQuery()` to its file inside **data/hooks**. These are standard RESTful API's that are called via the standard `fetch` API under the hood. Let's update **useFavStatusQuery.ts** to implement the actual GET request via fetch:
+
+```diff
+queryFn: async () => {
+-  return false
++  const response = await fetch(`/api/works/${workId}/fav`, {
++    method: 'GET',
++    headers: {
++      authToken,
++    },
++  });
++  return await response.json();
+},
 ```
 
 <details>
   <summary>Expand to just get just the added code for easy copying</summary>
 
   ```tsx
-  <Tabs.Screen
-   name="two"
-   options={{
-    title: "Favorites",
-     tabBarIcon: ({ color }) => (
-      <TabBarIcon type="FontAwesome" name="star" color={color} />
-    ),
-   }}
-  />
+export const useFavStatusQuery = function(workId: string) {
+  const { authToken } = useAuth();
+  // Queries
+  const query = useQuery({
+    queryKey: [`works:fav:${workId}`],
+    queryFn: async () => {
+      const response = await fetch(`/api/works/${workId}/fav`, {
+        method: 'GET',
+        headers: {
+          authToken,
+        },
+      });
+      return await response.json();
+    },
+  });
+
+  return query;
+}
   ```
 
 </details>
 
-**Try it**: Your tab should be called "Favorites" and should have a star icon now.
+Let's do the same with **useFavStatusMutation.ts**, implementing the POST:
+
+```diff
+mutationFn: async (favStatus: { workId: string; status: boolean }) => {
+  const { id, status } = favStatus;
+-  return false;
++  const response = await fetch(`/api/works/${workId}/fav`, {
++    method: "POST",
++    headers: {
++      Accept: "application.json",
++      "Content-Type": "application/json",
++      authToken,
++    },
++    cache: "default",
++    body: JSON.stringify({ status }),
++  });
++  return await response.json();
+},
+```
+
+<details>
+  <summary>Expand to just get just the added code for easy copying</summary>
+
+  ```tsx
+export const useFavStatusMutation = function () {
+  const queryClient = useQueryClient();
+  const { authToken } = useAuth();
+
+  // Queries
+  const query = useMutation({
+    mutationFn: async (favStatus: { workId: string; status: boolean }) => {
+      const { id, status } = favStatus;
+      const response = await fetch(`/api/works/${workId}/fav`, {
+        method: "POST",
+        headers: {
+          Accept: "application.json",
+          "Content-Type": "application/json",
+          authToken,
+        },
+        cache: "default",
+        body: JSON.stringify({ status }),
+      });
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData([`works:fav:${variables.workId}`], variables.status);
+      queryClient.invalidateQueries({ queryKey: ['favs'] })
+    },
+  });
+
+  return query;
+};
+  ```
+
+</details>
+
+> [!NOTE]  
+> What's with `authToken`? Uh...just think of it as foreshadowing.
+
+**Try it:** Navigate to a work and try to favorite it. Try to unfavorite it. You should see that star fill and unfill.
+
+**Try it (2):** Check out the profile tab! It's filling up your favorites now, thanks to the `/api/works/favs` API route, which was already wired up.
+
+## Exercise 3: Shut the front door: Authentication (frontend edition)
+
+## Exercise 4: Tighten the locks: wire the authentication to the backend
 
 ## Bonus
-- Hide the tab bar on mobile when navigating to an exhibit.
+- ???
 
 ## See the solution
 Switch to branch: `01-hello-router-solution`
