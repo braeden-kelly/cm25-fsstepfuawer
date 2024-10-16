@@ -15,6 +15,9 @@ Run the app and start exploring file-based routing by adding a few routes of you
 - Add the `works/[id]` dynamic route so you can navigate to individual works of art
 - In a very slight nod to responsive design, customize the `works/[id]` route to use a transparent modal, centering the artwork in the middle of the screen on larger screens.
 
+### Helpful links
+- TBD
+
 # Exercises
 
 ## Exercise 0: Get this thing running
@@ -194,4 +197,4 @@ export function useMediaQuery() {
 Switch to branch: `01-router-101-solution`
 
 ## Next exercise
-[Exercise 2](02-dynamic-routes.md)
+[Module 02](02-api-routes.md)
