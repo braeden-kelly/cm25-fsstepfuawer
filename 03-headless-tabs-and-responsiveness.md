@@ -187,16 +187,18 @@ Try going to Exhibits, clicking on a department, and then going to another tab a
 
 Feel free to try some of the other possibilities here. You can trigger the "reset" based on a long press, or selectively reset only on web (where it's definitely a more typical behavior, vs mobile, which is more of a judgement call).
 
+### Exercise 4: Floaty tabs
+
+TBD!
+
 ## Bonus
 - Everything works great if you start at the main route and open a work of art, but what if you copy the link to a work of art and share it with someone? (copy/paste it into another tab in your browser). You're stuck! Fix this with one line of code. (HINT: think `initialRouteName` from Module 01).
-- Shared route challenge: What if `works` was inside the `departments` stack, so going to an artwork meant pushing a screen on top of the department, instead of overlaying a modal over everything else? How would sharing a direct link to a work of art work? General approach:
-  - Move `works/[id]` under `departments` and fix the navigation so it at least works when you're doing in straight from the exhibits tab.
-  - The next steps are in my notes from Mark and I need to re-read those and try it out all the way and probably ask him some more questions
-  - If I really add this, I'll probably spell out the steps more specifically. It's pretty challenging but teaches you a lot about shared routes, but clearly I need more time to absorb it.
+- Tabs are perfect for mobile, top tabs are great for desktop web, but what about mobile web? Drawers seem to be a little more common there. Let's turn the tabs into drawer items when the screen width is less than `sm` and the platform is web.
+  - You could do this with the Expo Router drawer tutorial, which uses a full drawer navigator, but isn't a drawer really just differently-arranged tabs? Try it instead with something like the [drawer layout](https://reactnavigation.org/docs/drawer-layout/), instead putting the tab triggers inside the drawer content.
 
 ## See the solution
-Switch to branch: `01-hello-router-solution`
+Switch to branch: `03-headless-tabs-solution`
 
 ## Next exercise
-[Exercise 2](02-dynamic-routes.md)
+[Module 04](04-shared-routes.md)
 

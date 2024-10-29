@@ -197,4 +197,4 @@ export function useMediaQuery() {
 Switch to branch: `01-router-101-solution`
 
 ## Next exercise
-[Module 02](02-api-routes.md)
+[Module 02](02-api-routes-and-auth.md)

@@ -346,9 +346,9 @@ const login = async (email: string, password: string) => {
   - The transparent modal technique used in Module 01 would work great for the sign in screen on web.
 
 ## See the solution
-Switch to branch: `01-hello-router-solution`
+Switch to branch: `02-api-routes-solution`
 
 ## Next exercise
-[Module 02](03-headless-tabs-and-responsiveness.md)
+[Module 03](03-headless-tabs-and-responsiveness.md)
 
 
