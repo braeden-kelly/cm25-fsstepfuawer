@@ -216,12 +216,27 @@ Feel free to try some of the other possibilities here. You can trigger the "rese
 
 ### Exercise 4: Floaty tabs
 
-TBD!
+With just a little bit of extra Nativewind magic, we can turn those regular small screen tabs into fancy floating tabs that exist above your content, and allow enough extra space that you can scroll the content past them.
+
+1. Back in **(tabs)/_layout.tsx**, try these styles out:
+```diff
+<TabList
+  className={classNames(
+    "py-3 sm:py-6",
+    "px-6 sm:px-8",
+    "mx-2 sm:mx-0",
++    "bottom-safe-offset-2 sm:bottom-safe-offset-0", // keep the tabs above safe ares
++    "rounded-full sm:rounded-none", // round the corners
++    "absolute right-0 left-0 sm:relative", // position above content
++    "shadow-sm sm:shadow-none", // yum, shadows!
+    "sm:justify-end sm:gap-x-4 sm:shadow-sm",
+    "bg-white",
+  )}
+>
+```
 
 ## Bonus
-- Everything works great if you start at the main route and open a work of art, but what if you copy the link to a work of art and share it with someone? (copy/paste it into another tab in your browser). You're stuck! Fix this with one line of code. (HINT: think `initialRouteName` from Module 01).
-- Tabs are perfect for mobile, top tabs are great for desktop web, but what about mobile web? Drawers seem to be a little more common there. Let's turn the tabs into drawer items when the screen width is less than `sm` and the platform is web.
-  - You could do this with the Expo Router drawer tutorial, which uses a full drawer navigator, but isn't a drawer really just differently-arranged tabs? Try it instead with something like the [drawer layout](https://reactnavigation.org/docs/drawer-layout/), instead putting the tab triggers inside the drawer content.
+- Simulate an iPad interface (or really load this up on an iPad device or simulator), and have it use the floaty tabs instead of the web-optimized top tabs. Except, on iPad, floaty tabs should be narrow and centered, not taking up the whole width.
 
 ## See the solution
 Switch to branch: `03-headless-tabs-solution`
