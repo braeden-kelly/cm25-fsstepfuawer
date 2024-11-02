@@ -25,19 +25,19 @@ We want there to basically be two ways to access `/works/[workId]`:
 
 > [!NOTE] Starting from #2, we could branch off difference scenarios such as, when you're logged in, it goes straight into #1 and only shows #2 when you're not logged in, but we're going to focus for now on making #2 work in all cases.
 
-This is where **route groups** can help. They let us define what is in essance the same URL (as far as the user is concerned) in multiple places:
-- **app/(app)/works/[workId]** has an outward-facing URL of **/works/[workId]**
-- **app/(otherway)/works/[workId]** _also_ has an outward-facing URL of **/works/[workId]**
+This is where _route groups_ can help. They let us define what is in essance the same URL (as far as the user is concerned) in multiple places:
+- `app/(app)/works/[workId]` has an outward-facing URL of `/works/[workId]`
+- `app/(otherway)/works/[workId]` _also_ has an outward-facing URL of `/works/[workId]`
 
 There's a few different ways you could navigate to each distinct route:
-- In your URL bar of application code, address it specifically, including the groups (e.g., **app/(otherway)/works/[workId]**)
-- Depending on where you are in the navigation tree already, if you just use the outward-facing URL (e.g., **works/[workId]**), you'll go to whichever route is closest.
+- In your URL bar of application code, address it specifically, including the groups (e.g., `app/(otherway)/works/[workId]`)
+- Depending on where you are in the navigation tree already, if you just use the outward-facing URL (e.g., `works/[workId]`), you'll go to whichever route is closest.
 
 ### Works page doppleganger
 Let's start by just duplicating the route component somewhere else and navigating there.
 
 1. Create the **app/(direct)** folder (we'll call it this because our goal is to go _directly_ there with a deep link)
-2. Inside of **app/(direct)**, create the **works** folder, and then inside of that, **[workId].tsx**. So, the whole route will be **app/(direct)/works/[workId]** (under `direct`, the route is the same as or original route - it's _shared_).
+2. Inside of **app/(direct)**, create the **works** folder, and then inside of that, **[workId].tsx**. So, the whole route will be `app/(direct)/works/[workId]` (under `direct`, the route is the same as or original route - it's _shared_).
 3. Import the screen component you already have into this new **[workId].tsx** file:
 ```tsx
 import WorkIdScreen from "@/app/(app)/works/[id]/index";
@@ -304,6 +304,12 @@ export default function WorkScreen() {
 </summary>
 
 🏃**Try it** Try navigating to a work, copying the link, opening it in another tab, or even in another browser or private browser window to simulate being logged out.
+
+## Exercise 1b: Of `initialRouteName`'s and `Redirect`'s
+
+I take it back - we're going to fix the logged-in behavior of what we just did to _really_ match Instagram, which either shows you the post-only view when you're logged out, or takes you right into the post as if you're logged in, with you feed underneath.
+
+It really, really helps to understand something important about `initialRouteName` at this point: _it only applies 
 
 ## Exercise 2: Two stacks, one route: fixing the wonky `exhibits/[exhibitName]` route.
 The whole time, you've been able to go to the Exhibits tab, click on an exhibit, and view that Exhibit while staying in the Exhibits tab... or, you can click on an exhibit name above the selected works on the Home tab, and it would take you to the exhibit under Exhibits tab, but back would take you "back" to the Exhibits tab, instead of back to the Home tab. 
