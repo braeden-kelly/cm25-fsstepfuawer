@@ -38,7 +38,7 @@ export default function LoginScreen() {
             await login(email, password);
             router.replace("/(app)");
           }}
-          label="Sign in"
+          label="Log in"
         />
       </View>
     </KeyboardAvoidingView>

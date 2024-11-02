@@ -192,11 +192,11 @@ export const useFavStatusMutation = function () {
 The ability to favorite artwork isn't very compelling without the ability to login and identify yourself (currently everything saves to a single user 🙈). Let's present a login screen that will always show until the user logs in.
 
 ### Protected routes
-The concept behind this is _protected routes_. Within the `(app)` route group, we'll redirect out to the `sign-in` route if certain conditions are not met (such as having a valid auth token). This _protects_ everything under **(app)** from being accessed by someone who isn't logged in.
+The concept behind this is _protected routes_. Within the `(app)` route group, we'll redirect out to the `login` route if certain conditions are not met (such as having a valid auth token). This _protects_ everything under **(app)** from being accessed by someone who isn't logged in.
 
-We can add this protection inside **(app)/_layout.tsx**. When you navigate within a route, the layout is rendered before any of the child routes are rendered. So, if the **_layout** file "renders" a redirect to `sign-in`, the child routes never render and the user sees the sign in page. 
+We can add this protection inside **(app)/_layout.tsx**. When you navigate within a route, the layout is rendered before any of the child routes are rendered. So, if the **_layout** file "renders" a redirect to `login`, the child routes never render and the user sees the login page. 
 
-Meanwhile, `sign-in` route will attempt to navigate back to `(app)` once login is successful. This causes the layout to be rendered again. This time, the layout detects that the user has a valid auth token, and proceeds with rendering the child route.
+Meanwhile, `login` route will attempt to navigate back to `(app)` once login is successful. This causes the layout to be rendered again. This time, the layout detects that the user has a valid auth token, and proceeds with rendering the child route.
 
 ### Lock the door (kick out logged-out users)
 1. Create a **login.tsx** file inside of **app**. You can copy the code from our [login.tsx starter here](/files/02/login.tsx).
@@ -207,7 +207,7 @@ export default function layout() {
 +  const { authToken } = useAuth();
 +
 +  if (!authToken) {
-+    return <Redirect href="/sign-in" />;
++    return <Redirect href="/login" />;
 +  }
 
   return (
@@ -215,10 +215,10 @@ export default function layout() {
 
 Also import `useAuth` from `@/data/hooks/useAuth` and `Redirect` from `expo-router`.
 
-🏃**Try it:** You should now be "trapped" at the sign-in page. In a browser, try setting another URL. It should not work.
+🏃**Try it:** You should now be "trapped" at the login page. In a browser, try setting another URL. It should not work.
 
 ### Provide a key (let in logged-in users)
-The "Sign In" button on the sign in page is already wired up to call the `login` function, which sets the auth token, but a) `login` itself doesn't do anything, and b) it doesn't navigate anywhere. Let's fix that:
+The "Log in" button on the login page is already wired up to call the `login` function, which sets the auth token, but a) `login` itself doesn't do anything, and b) it doesn't navigate anywhere. Let's fix that:
 
 3. In **api/hooks/useAuth.ts**, you'll see we already have a Jotai store set up to store `authToken`, and that's wired to async storage. But there's nothing in the `login` function. Let's just set the token for now:
 ```diff
@@ -227,9 +227,9 @@ const login = async (email: string, password: string) => {
   };
 ```
 
-🏃**Try it:** Type anything into the email/password form and press Sign In. Nothing will happen, but refresh the page/app. You should be logged in! The reload forced the app to try to go back into `(app)` (Expo Router looks for the first `index` route, which is in your tabs). This time, it found an auth token because pressing Sign In stored it in local storage.
+🏃**Try it:** Type anything into the email/password form and press Login. Nothing will happen, but refresh the page/app. You should be logged in! The reload forced the app to try to go back into `(app)` (Expo Router looks for the first `index` route, which is in your tabs). This time, it found an auth token because pressing Login stored it in local storage.
 
-4. Back in **sign-in.tsx**, use Expo Router imparatively to navigate to `/(app)` after calling `login`:
+4. Back in **login.tsx**, use Expo Router imparatively to navigate to `/(app)` after calling `login()`:
 ```diff
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -255,7 +255,7 @@ export default function LoginScreen() {
         }}
       >
         <View className="py-4 px-8 bg-tint">
-          <Text className="text-white">Sign in</Text>
+          <Text className="text-white">Log in</Text>
         </View>
       </Pressable>
     </View>
@@ -266,9 +266,7 @@ export default function LoginScreen() {
 
 `replace` removes history from the stack and ensures that you can't go back with a back button or swipe gesture.
 
-🏃**Try it:** Login and logout a few times. It should feel like an actual login workflow.
-
-<!-- TODO: pick one of "sign in" or "login" -->
+🏃**Try it:** Log in and log out a few times. It should feel like an actual login workflow.
 
 > [!NOTE]  
 > The Expo Router instructions demonstrate this workflow using React context, which would be the built-in way to share state like an auth token across your app. But this app uses a little bit of Jotai, and Jotai enables reactive data, causing an automatic rerender of **app/(app)/_layout.tsx**, which is why all logging out needs to do is update the `authToken`.
@@ -279,7 +277,7 @@ Let's add the actual login API route and wire things up to that.
 > [!WARNING]  
 > Do not interpret any code in here as anything even vaguely resembling a secure authentication system.
 
-1. Add the **app/api/sign-in+api.ts** route, with this code:
+1. Add the **app/api/login+api.ts** route, with this code:
 ```ts
 import { Database } from '@/data/api/database';
 
@@ -294,7 +292,8 @@ export async function POST(request : Request) {
 2. Update `login` inside of **useAuth.ts** to call this API:
 ```diff
 const login = async (email: string, password: string) => {
-+  const response = await fetch(`/api/sign-in`, {
+-  await setAuthToken("whatever");
++  const response = await fetch(`/api/login`, {
 +    method: "POST",
 +    headers: {
 +      Accept: "application.json",
@@ -305,7 +304,6 @@ const login = async (email: string, password: string) => {
 +  });
 +  const data = await response.json();
 +  await setAuthToken(data.authToken);
--  await setAuthToken("whatever");
 };
 ```
 
@@ -314,7 +312,7 @@ const login = async (email: string, password: string) => {
 
   ```tsx
 const login = async (email: string, password: string) => {
-  const response = await fetch(`/api/sign-in`, {
+  const response = await fetch(`/api/login`, {
     method: "POST",
     headers: {
       Accept: "application.json",
@@ -332,18 +330,18 @@ const login = async (email: string, password: string) => {
 
 3. Update all the routes inside **app/api/works** to read the auth token from the header:
 ```diff
-+ const database = new Database(request.headers.get('authToken'));
 - const database = new Database();
++ const database = new Database(request.headers.get('authToken'));
 ```
 
 (Again, don't worry about what this database is doing (I assure you it's unremarkable / possibly horrifying), the important thing is that we passed data through a header that we can read on the other end.)
 
-🏃**Try it:** Login and logout a few times. Hopefully it all still works! The unique "users" are actually ID'ed by a hash of the email and password 🙈, so try the same email and password to see your data persist.
+🏃**Try it:** Login and logout a few times. Hopefully it all still works! The unique "users" in this not-realistic simulation are actually ID'ed by a hash of the email and password 🙈, so try the same email and password to see your data persist. (Again, please don't do this in real life!)
 
 ## Bonus
-- For an app like this, it'd probably be more appropriate to allow it to be viewed unauthenticated, and then enable the Profile tab and favoriting capability once logged in. There could be a login button on the Home tab that then pushes the `sign-in` route onto the outer stack, which is then popped off once login is complete. It's not a small lift, but worth a try if you'd like an extra challenge. Tips:
+- For an app like this, it'd probably be more appropriate to allow it to be viewed unauthenticated, and then enable the Profile tab and favoriting capability once logged in. There could be a log in button on the Home tab that then pushes the `login` route onto the outer stack, which is then popped off once login is complete. It's not a small lift, but worth a try if you'd like an extra challenge. Tips:
   - Use the `useAuth()` hook to read the `authToken` and hide elements like the Profile tab and favorite button. Hiding tabs works differently in Expo Router (use a `null` `href` prop): https://docs.expo.dev/router/advanced/tabs/#advanced.
-  - The transparent modal technique used in Module 01 would work great for the sign in screen on web.
+  - The transparent modal technique used in Module 01 would work great for the login screen on web.
 
 ## See the solution
 Switch to branch: `02-api-routes-solution`
