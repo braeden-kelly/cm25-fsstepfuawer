@@ -1,50 +1,41 @@
 # React Native London Conf 2024 Workshop: Expo Router
-Workshop exercises for Web, Mobile, and API, All Together: Universal Full Stack Apps in Expo Router for React Miami 2024
+Workshop exercises for the Expo Router workshop at React Native London Conf 2024.
 
-## How to do the workshop
-### 1. Clone it
-```
-git clone https://github.com/keith-kurak/miami-masterclass-2024
-```
+## How to use this repo
 
-or open with Github Desktop.
+1. Fork the [companion repo](https://github.com/keith-kurak/expo-router-london-2024-starter). You'll start working right on `main`.
+2. Start at the first module by opening up the file starting with "01-".
+3. Do the rest of the modules in order.
 
-### 2. Restore dependencies
-Run 
-```
-npm install
-```
+## Prerequisites
+- Node LTS version (18+)
+- Visual Studio Code
+- Expo Go on your device or simulator
+- Web browser
 
-### 3. Run it
-Run 
-```
-npx expo start
-```
+You actually don't need a Mac for this workshop. You don't need to do any native builds for the main workshop exercises (maybe useful for 1 or 2 side quests)
 
-#### To run on web
-Press `w`.
+## Test your setup before the workshop
 
-#### To run on your device
-1. Go to [expo.dev/go](https://expo.dev/go) on your phone and download "Expo Go".
-2. In your camera app, scan the QR code on your terminal.
-(your computer and phone will need to be on the same wifi)
+Do these steps to ensure you'll be ready to go when the workshop starts:
 
-### 4. Do the exercises
-Start at [Exercise 1](/workshop/01-hello-router.md).
+1. Fork and clone the [template repo](https://github.com/keith-kurak/expo-router-london-2024-starter).
 
-Then do:
-- [Exercise 2](/workshop/02-dynamic-routes.md)
-- [Exercise 3](/workshop/03-api-routes.md)
+2. Open the project in Visual Studio Code and install the recommended extensions.
 
-## Etc.
-### Slides!
-[Slides](https://docs.google.com/presentation/d/1Me8xcTt5A9dyZF3l8HSx6bhbyB0AAcODimGRS8T-l4Y/edit?usp=sharing)
-### Prerequisites?
-Not really. This should work if you have a supported Node environment (e.g., 18 or 20). [There's more details about setting up Expo here](https://docs.expo.dev/get-started/installation/).
-### Tips for Windows
-- Expo instructions for Windows 11 (PowerShell and WSL-compatible): https://docs.expo.dev/get-started/installation/#windows-terminal-support
-### Still not working?
-One helpful thing to try out is to create a blank Expo app and see if it works. Run `npx create-expo-app` and try to run it with the instructions above. If that doesn't work, there's quite likely something up with your local dev environment.
+3. Restore dependencies with
+
+```npm install```
+
+4. Run `npx expo start`
+
+5. Press `w` to open the app in your web browser.
+
+6. Scan the QR code with your phone to test the app in Expo Go.
+
+## Other resources
+
+TBD
 
 ## Connect
 - [Twitter](https://twitter.com/home)
