@@ -309,7 +309,31 @@ export default function WorkScreen() {
 
 I take it back - we're going to fix the logged-in behavior of what we just did to _really_ match Instagram, which either shows you the post-only view when you're logged out, or takes you right into the post as if you're logged in, with you feed underneath.
 
-It really, really helps to understand something important about `initialRouteName` at this point: _it only applies 
+It really, really helps to understand something important about `initialRouteName` at this point: _it only applies to when you first load up the app/website_. It's simply a mechanism to ensure that a deep link into the app pushes whatever routes need to be underneath the deep link's screen onto the history.
+
+However, in this example, a redirect to the same deep link after the app has already been loaded would be helpful. Fortunately, there's now a way to apply `initialRouteName` config to in-app navigation: the `withAnchor` prop.
+
+1. Let's try the redirect first without `withAnchor`. In **app/(1-direct)/works/[workId].tsx** add this after all the hooks, but before the return statement:
+```tsx
+ if (authToken) {
+  return <Redirect href={`/(app)/works/${id}`} />;
+}
+```
+
+🏃**Try it** If you're logged in, now reloading the page on a work will take you to the same place you were, but... you can't go anywhere else. No back button, no tabs. 
+
+Recall earlier that, before you added the `(1-direct)` route, that a direct link would open up the tabs screen underneath the works screen and there would be a back button so you could get back to that. That was `initialRouteName` in action. Expo Router can't assume that you always want a particular screen opened first when navigating somewhere (how would it know your intentions), so now there's a parameter to tell Router to respect `initialRouteName` on a particular navigation operation if the route has not already been loaded.
+
+2. Add `withAnchor`:
+
+```diff
+ if (authToken) {
+-  return <Redirect href={`/(app)/works/${id}`} />;
++  return <Redirect href={`/(app)/works/${id}`} withAnchor />;
+}
+```
+
+🏃**Try it** If you're logged in, now reloading the page on a work will take you to the same place you were, and everything works as before!
 
 ## Exercise 2: Two stacks, one route: fixing the wonky `exhibits/[exhibitName]` route.
 The whole time, you've been able to go to the Exhibits tab, click on an exhibit, and view that Exhibit while staying in the Exhibits tab... or, you can click on an exhibit name above the selected works on the Home tab, and it would take you to the exhibit under Exhibits tab, but back would take you "back" to the Exhibits tab, instead of back to the Home tab. 
