@@ -15,6 +15,7 @@ Fully-customize the tab bar so its much easier to move around and attach custom 
 - Automatically go back to the top of the stack when you navigate to Exhibits.
 
 ### Helpful links
+- TBD
 
 # Exercises
 
@@ -49,11 +50,16 @@ return (
 2. We split out the `tabs` into a separate variable to make it a little easier to read. Add the `tabs` variable:
 ```tsx
 const tabs = (
-  <TabList className="py-2 px-8">
+  <TabList  className={classNames(
+      "py-3 sm:py-6",
+      "px-6 sm:px-8",
+      "mx-2 sm:mx-0",
+      "bg-white",
+    )}>
     <TabTrigger name="index" href="/" asChild>
       <TabButton icon="museum">Home</TabButton>
     </TabTrigger>
-    <TabTrigger name="departments" asChild href="/departments">
+    <TabTrigger name="exhibits" asChild href="/exhibits">
       <TabButton icon="palette">Exhibits</TabButton>
     </TabTrigger>
     <TabTrigger name="visit" asChild href="/visit">
@@ -67,7 +73,7 @@ const tabs = (
 ```
 
 Also be sure to import everything: 
-- `import { Tabs, TabList, TabSlot, TabTrigger } from "expo-router/build/ui";`
+- `import { Tabs, TabList, TabSlot, TabTrigger } from "expo-router/ui";`
 - `import { TabButton } from "@/components/TabButton";`
 
 🏃**Try it:** Tabs will look a little different, but they definitely should be there. Congrats, the tabs are all yours now to style as you wish.
@@ -75,14 +81,18 @@ Also be sure to import everything:
 3. Whoever made this workshop was nice enough top provide a basic `TabButton`, but you can't even tell which one is selected. `TabTrigger` provides an `isFocused` prop to its children, which can be used to adjust styles dynamically:
 
 ```diff
+<Pressable
+  ref={ref}
+  {...props}
+>
   <MaterialIcons
-+    className={isFocused ? " color-tint" : ""}
++   color={isFocused ? colors.tint : colors.black}
     name={icon}
     size={24}
   />
   <Text
 -    className="text-md"
-+    className={" text-md" + (isFocused ? " sm:text-white color-tint" : "")}
++    className={" text-md" + (isFocused ? " color-tint" : "")}
   >
     {children}
   </Text>
@@ -103,10 +113,15 @@ To accomplish these goals, we need to add Nativewind classes with responsive bre
 ### Outside the tabs
 🏃**Try it** after each of the steps by running the app in your web browser and expanding and contracting the window (the "Web Preview" VS Code extension is quite nice for this).
 
-1. First move the tabs to the right and give them a little extra space:
+1. First move the tabs to the right and give them a little extra space (and a little shadow, why not?):
 ```diff
-+ <TabList className="py-2 px-8 sm:justify-end sm:gap-x-4">
-- <TabList className="py-2 px-8">
+<TabList  className={classNames(
+  "py-3 sm:py-6",
+  "px-6 sm:px-8",
+  "mx-2 sm:mx-0",
++  "sm:justify-end sm:gap-x-4 sm:shadow-sm",
+  "bg-white",
+)}>
 ```
 
 2. Invert the tabs and the content, moving the tabs to the top:
@@ -125,17 +140,32 @@ To accomplish these goals, we need to add Nativewind classes with responsive bre
 3. Let's add that nice title we were talking about. Put this in the return statement... somewhere where you would typically put something absolutely-positioned that you want on-top of everything else:
 
 ```tsx
-<View className="absolute left-2 top-0.5 flex-row items-center">
-  <MaterialIcons name="museum" size={28} className="color-tint top-1" />
-  <Text className="text-xl color-tint ml-2">Cleveland Museum of Art</Text>
+<View
+  className={classNames(
+    "absolute left-6 top-5 h-10 w-52",
+  )}
+>
+  <Image
+    source={require("@/assets/images/logo.svg")}
+    className="w-full h-full"
+  />
 </View>
 ```
 
 4. Oops! It's still showing up on small screens. Fix that:
 
 ```diff
-- <View className="absolute left-2 top-0.5 flex-row items-center">
-+ <View className="hidden sm:inline absolute left-2 top-0.5 flex-row items-center">
+<View
+  className={classNames(
++    "hidden sm:inline",
+    "absolute left-6 top-5 h-10 w-52",
+  )}
+>
+  <Image
+    source={require("@/assets/images/logo.svg")}
+    className="w-full h-full"
+  />
+</View>
 ```
 
 ### Inside the tabs
@@ -146,29 +176,26 @@ All the steps here are inside **TabButton.tsx**.
 5. Let's get rid of the icon:
 ```diff
 <MaterialIcons
--  className={isFocused ? " color-tint" : ""}
-+  className={"sm:hidden" + (isFocused ? " color-tint" : "")}
+  color={isFocused ? colors.tint : colors.black}
++  className="sm:hidden"
   name={icon}
   size={24}
 />
 ```
 
-6. Let's change the background entirely when the tab is selected:
+6. Let's make the tint color a line below the tab title instead of the title itself (and make the text larger):
 ```diff
 <Pressable
   ref={ref}
   {...props}
--  className={"justify-between items-center gap-y-1 px-2 flex-col"}
-+  className={"justify-between items-center gap-y-1 px-2 flex-col" + (isFocused ? " sm:bg-shade-3" : "")}
++  className={isFocused ? " sm:border-b-tint sm:border-b-2" : ""}
 >
 ```
 
-7. The blue tint seems to be a bit much. Remove that and make the text a little larger:
-
 ```diff
 <Text
--  className={"text-md" + (isFocused ? " color-tint" : "")}
-+  className={"text-md sm:text-lg" + (isFocused ? " sm:text-white color-tint" : "")}
+-  className={" text-sm" + (isFocused ? " color-tint" : "")}
++  className={  "text-sm sm:text-lg" + (isFocused ? " color-tint sm:color-black" : "")}
 >
   {children}
 </Text>
