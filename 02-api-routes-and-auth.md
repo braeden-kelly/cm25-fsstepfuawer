@@ -199,7 +199,7 @@ We can add this protection inside **(app)/_layout.tsx**. When you navigate withi
 Meanwhile, `sign-in` route will attempt to navigate back to `(app)` once login is successful. This causes the layout to be rendered again. This time, the layout detects that the user has a valid auth token, and proceeds with rendering the child route.
 
 ### Lock the door (kick out logged-out users)
-1. Drag **sign-in.tsx** out of the **new-screens** folder and into **app**.
+1. Create a **login.tsx** file inside of **app**. You can copy the code from our [login.tsx starter here](/files/02/login.tsx).
 2. In **app/(app)/_layout.tsx**, add a conditional to redirect if `authToken` is not set:
 
 ```diff
