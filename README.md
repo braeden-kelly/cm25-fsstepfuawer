@@ -33,6 +33,9 @@ Do these steps to ensure you'll be ready to go when the workshop starts:
 
 6. Scan the QR code with your phone to test the app in Expo Go.
 
+> [!TIP]
+> Pull changes from the forked starter repo and run `npm install` again right before the workshop, as there may be fixes and version bumps!
+
 ## Other resources
 
 TBD
