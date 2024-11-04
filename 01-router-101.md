@@ -68,35 +68,6 @@ We've decided it would be best to have information for visitors as a separate ta
 ```
 🏃**Try it.** Now the tab should look pretty good.
 
-### Nested routes
-Notice that not everything in that tabs route is just a single file. There's the **exhibits** folder, with multiple routes. This is a stack nested inside a tab.
-Let's experiment with some different scenarios here. **Refresh the browser / shake and refresh your app before each one to reset navigation history**:
-a. Exhibits tab -> click on an exhibit -> go back (pretty normal stack-in-tabs)
-b. Exhibits tab -> Home tab -> click on an exhibit name above an artwork -> go back (normal-ish, going back to the index of Exhibits instead of Home is interesting)
-c. Home tab -> click on an exhibit -> go back (oh wait, you can't, that's bad!)
-d. (browser-only) Home tab -> click on an exhibit -> reload page (can't go anywhere! real bad)
-
-4. Fix c) and d) by adding the following to **(app)/exhibits/_layout.tsx**:
-```tsx
-export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: "index",
-};
-```
-
-This says that, when inside the **exhibits** route, the index should be the first route. The ensures that, even if you go directly to a exhibit, the exhibits list will be underneath it.
-
-<!--
-Errata: 
-- c) is not actually fixed, not sure why .. actually, it's due to lazy=false not existing on headless tabs, but withAnchor might fix this.
-    Anyway, this will work at this stage of the workshop as long as we set lazy: true ;-)
-    I think I'll leave that in there for them, we don't want to deal with this complication
-    But something I should ask Mark about
-- Also, there's param junk when going back from d). Maybe just an alpha thing?
-- Facing this issue right now: https://github.com/expo/expo/issues/31747
- -->
-
-
 ## Exercise 3: Navigating to arbitrary things with dynamic routes
 Dynamic routes let you put a variable into your URL, that you can then query on the destination screen. They are defined with square brackets, e.g., `[id]`.
 
@@ -145,7 +116,44 @@ By now, you're probably quite annoyed by that header with route garbage at the t
 />
 ```
 
-## Exercise 4: A little bit of responsiveness
+## Exercise 4: Nested routes
+Notice that not everything in that tabs route is just a single file. There's the **exhibits** folder, with multiple routes. This is a stack nested inside a tab.
+
+Let's experiment with some different scenarios here. **Refresh the browser / shake and refresh your app before each one to reset navigation history**:
+a. Exhibits tab -> click on an exhibit -> go back (pretty normal stack-in-tabs)
+b. Exhibits tab -> Home tab -> click on an exhibit name above an artwork -> go back (normal-ish, going back to the index of Exhibits instead of Home is interesting)
+c. Home tab -> click on an exhibit -> go back (oh wait, you can't, that's bad!)
+d. (browser-only) Home tab -> click on an exhibit -> reload page (can't go anywhere! real bad)
+
+Let's start with c). We'll fix it with kind of a cludge for now, maybe we'll make it better later. What's going on is that you're navigating to a specific screen inside of a stack. The stack has no idea that it was supposed to put another screen under it, so it didn't.
+
+4. For the `exhibits` route to render its index when the app is loaded by telling React Navigation to load all of the tabs when the app is loaded. Use the `lazy` prop in **(app)/(tabs)/_layout.tsx**:
+
+```diff
+<Tabs
+  sceneContainerStyle={{ backgroundColor: colors.white }}
+  screenOptions={{
+    headerShown: false,
++    lazy: false,
+  }}
+>
+```
+
+Meanwhile, the `initialRouteName` configuration lets you specify a child route that should exist in history _if the app is first loaded on one of its sibling routes_. That sounds tailor-made for scenario d)
+
+4. Add the following to **(app)/exhibits/_layout.tsx**:
+```tsx
+export const unstable_settings = {
+  // Ensure any route can link back to `/`
+  initialRouteName: "index",
+};
+```
+
+This says that, when inside the **exhibits** route, the index should be the first route. The ensures that, even if you go directly to a exhibit, the exhibits list will be underneath it.
+
+🏃**Try it.** c) and d) should work better now.
+
+## Exercise 5: A little bit of responsiveness
 Head over to your browser, and make the window wide. Now open an artwork. Real "blown up mobile app" vibes, right? Let's use some navigator props and creative styling to make this a centered modal on web, floating above the underlying content.
 
 1. In **app/(app)/layout.tsx**, add this code just inside the options for this screen:
