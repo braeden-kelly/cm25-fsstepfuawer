@@ -109,7 +109,7 @@ By now, you're probably quite annoyed by that header with route garbage at the t
 
 ```tsx
 <Stack.Screen
-  name="works/[id]/index"
+  name="works/[workId]"
   options={{
     headerShown: false,
   }}
@@ -122,8 +122,8 @@ Notice that not everything in that tabs route is just a single file. There's the
 Let's experiment with some different scenarios here. **Refresh the browser / shake and refresh your app before each one to reset navigation history**:
 a. Exhibits tab -> click on an exhibit -> go back (pretty normal stack-in-tabs)
 b. Exhibits tab -> Home tab -> click on an exhibit name above an artwork -> go back (normal-ish, going back to the index of Exhibits instead of Home is interesting)
-c. Home tab -> click on an exhibit -> go back (oh wait, you can't, that's bad!)
-d. (browser-only) Home tab -> click on an exhibit -> reload page (can't go anywhere! real bad)
+c. Home tab -> click on an exhibit -> go back (oh wait, no back button, that's bad!)
+d. (browser-only) Home tab -> click on an exhibit -> reload page (stuck on a single exhibit, real bad!)
 
 Let's start with c). We'll fix it with kind of a cludge for now, maybe we'll make it better later. What's going on is that you're navigating to a specific screen inside of a stack. The stack has no idea that it was supposed to put another screen under it, so it didn't.
 
@@ -199,7 +199,7 @@ options={{
 
 </details>
 
-This will make this screen present like a transparent modal, but it will not look very obvious until we shrink the size of the content, so the transparent area will show up underneath it.
+This will make this screen present like a transparent modal, but it will not look very obvious (minus the previous screen exposed underneath) until we shrink the size of the content, so the transparent area will show up underneath it.
 
 Let's use Nativewind's _responsive breakpoints_ to adjust the window size. If you're not used to Nativewind or Tailwind, that's OK. We're just going to do a very little bit to get a taste of it.
 
@@ -254,7 +254,7 @@ export function useMediaQuery() {
 - Hide the tab bar on mobile when navigating to an exhibit.
 
 ## See the solution
-Switch to branch: `01-router-101-solution`
+[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/1)
 
 ## Next exercise
 [Module 02](02-api-routes-and-auth.md)
