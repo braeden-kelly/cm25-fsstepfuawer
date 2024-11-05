@@ -128,7 +128,7 @@ Let's do the same with **useFavStatusMutation.ts**, implementing the POST:
 
 ```diff
 mutationFn: async (favStatus: { workId: string; status: boolean }) => {
-  const { id, status } = favStatus;
+  const { workId, status } = favStatus;
 -  return false;
 +  const response = await fetch(`/api/works/${workId}/fav`, {
 +    method: "POST",
@@ -337,11 +337,6 @@ const login = async (email: string, password: string) => {
 (Again, don't worry about what this database is doing (I assure you it's unremarkable / possibly horrifying), the important thing is that we passed data through a header that we can read on the other end.)
 
 🏃**Try it:** Login and logout a few times. Hopefully it all still works! The unique "users" in this not-realistic simulation are actually ID'ed by a hash of the email and password 🙈, so try the same email and password to see your data persist. (Again, please don't do this in real life!)
-
-## Bonus
-- For an app like this, it'd probably be more appropriate to allow it to be viewed unauthenticated, and then enable the Profile tab and favoriting capability once logged in. There could be a log in button on the Home tab that then pushes the `login` route onto the outer stack, which is then popped off once login is complete. It's not a small lift, but worth a try if you'd like an extra challenge. Tips:
-  - Use the `useAuth()` hook to read the `authToken` and hide elements like the Profile tab and favorite button. Hiding tabs works differently in Expo Router (use a `null` `href` prop): https://docs.expo.dev/router/advanced/tabs/#advanced.
-  - The transparent modal technique used in Module 01 would work great for the login screen on web.
 
 ## See the solution
 Switch to branch: `02-api-routes-solution`

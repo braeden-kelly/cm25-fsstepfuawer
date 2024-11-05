@@ -250,9 +250,6 @@ export function useMediaQuery() {
 }
 ```
 
-## Bonus
-- Hide the tab bar on mobile when navigating to an exhibit.
-
 ## See the solution
 [Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/1)
 

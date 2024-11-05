@@ -16,8 +16,6 @@ export default function LoginScreen() {
 
   const { login } = useAuth();
 
-  const router = useRouter();
-
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View className="flex-1 justify-center items-center gap-y-6 bg-shade-0">
@@ -36,7 +34,6 @@ export default function LoginScreen() {
         <Button
           onPress={async () => {
             await login(email, password);
-            router.replace("/(app)");
           }}
           label="Log in"
         />
