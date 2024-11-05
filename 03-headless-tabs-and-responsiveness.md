@@ -137,6 +137,8 @@ To accomplish these goals, we need to add Nativewind classes with responsive bre
   </View>
 ```
 
+(import `Image` from `expo-image`)
+
 3. Let's add that nice title we were talking about. Put this in the return statement... somewhere where you would typically put something absolutely-positioned that you want on-top of everything else:
 
 ```tsx
@@ -173,7 +175,7 @@ All the steps here are inside **TabButton.tsx**.
 
 🏃**Try it** after each step just like you've been doing.
 
-5. Let's get rid of the icon:
+5. Let's get rid of the icon for the wide screen format:
 ```diff
 <MaterialIcons
   color={isFocused ? colors.tint : colors.black}
@@ -235,11 +237,8 @@ With just a little bit of extra Nativewind magic, we can turn those regular smal
 >
 ```
 
-## Bonus
-- Simulate an iPad interface (or really load this up on an iPad device or simulator), and have it use the floaty tabs instead of the web-optimized top tabs. Except, on iPad, floaty tabs should be narrow and centered, not taking up the whole width.
-
 ## See the solution
-Switch to branch: `03-headless-tabs-solution`
+[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/3)
 
 ## Next exercise
 [Module 04](04-shared-routes.md)

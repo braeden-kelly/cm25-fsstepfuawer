@@ -15,3 +15,7 @@
   - The transparent modal technique used in Module 01 would work great for the login screen on web.
 
   - Hide the tab bar on mobile when navigating to an exhibit.
+
+  - Simulate an iPad interface (or really load this up on an iPad device or simulator), and have it use the floaty tabs instead of the web-optimized top tabs. Except, on iPad, floaty tabs should be narrow and centered, not taking up the whole width.
+
+  - What if, instead of offering the public page for a work, whenever you got a direct link to a work of art but weren't logged in, you were presented with the login screen, and then after logging in, it took you to the work? In essence, it would stash your deep link until you took care of the prerequisite of logging in (so many apps don't do this!).

@@ -399,10 +399,7 @@ export const unstable_settings = {
 🏃**Try it** Things should be looking pretty good by now, whether you're navigating around or deep-linking to an exhibit.
 
 ## See the solution
-Switch to branch: `04-shared-routes-solution`
-
-## Bonus
-- What if, instead of offering the public page for a work, whenever you got a direct link to a work of art but weren't logged in, you were presented with the login screen, and then after logging in, it took you to the work? In essence, it would stash your deep link until you took care of the prerequisite of logging in (so many apps don't do this!).
+[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/4)
 
 ## Next exercise
 [Exercise 5](02-dynamic-routes.md)
