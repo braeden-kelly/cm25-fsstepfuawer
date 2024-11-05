@@ -40,12 +40,12 @@ Let's start by just duplicating the route component somewhere else and navigatin
 2. Inside of **app/(direct)**, create the **works** folder, and then inside of that, **[workId].tsx**. So, the whole route will be `app/(direct)/works/[workId]` (under `direct`, the route is the same as or original route - it's _shared_).
 3. Import the screen component you already have into this new **[workId].tsx** file:
 ```tsx
-import WorkIdScreen from "@/app/(app)/works/[id]/index";
+import WorkIdScreen from "@/app/(app)/works/[workId]";
 
 export default WorkIdScreen;
 ```
 
-🏃**Try it** In your browser, start at the initial route, open a work. Now, add `(direct)` in front of the works route, e.g., `http://localhost:8081/(direct)/works/123456`. Does it look a little different, like there's a modal with nothing behind it?
+🏃**Try it** In your browser, start at the initial route, open a work. Now, add `(direct)` in front of the works route, e.g., `http://localhost:8081/(direct)/works/137259`. Does it look a little different, like there's a modal with nothing behind it?
 
 Now try the scenario we've been talking about this whole time, where you share the link to a work of art with someone else. Go back through the entry point, open a work of art, copy the URL and open it in another tab. Does it go to the `(direct)` version or the original?
 
@@ -69,7 +69,7 @@ But `(app)` is before `(direct)` in the alphabet, so `(app)` wins. Let's fix tha
 ### Cleaning things up
 Let's make this new direct link look like something intentional and not just a broken modal.
 
-5. Refactor everything inside of the `ScrollView` in **app/(app)/works/[workId].tsx** into a separate `ArtworkDetail` component that you can put inside a new **components/ArtworkDetail.tsx** file. The component will need to take at least one parameter, the `work` object that's returned from the `useWorkByIdQuery()` hook (feel free to do as Keith does and use the `any` type, he won't mind!).
+5. Refactor everything inside of the `ScrollView` (including the `ScrollView` itself) in **app/(app)/works/[workId].tsx** into a separate `ArtworkDetail` component that you can put inside a new **components/ArtworkDetail.tsx** file. The component will need to take at least one parameter, the `work` object that's returned from the `useWorkByIdQuery()` hook (feel free to do as Keith does and use the `any` type, he won't mind!).
 
 <details>
   <summary>If you're running short on time or just don't feel like doing that, here's a suggested `ArtworkDetail` component you can paste right in:</summary>
@@ -176,18 +176,18 @@ import { useAuth } from "@/data/hooks/useAuth";
 import { ArtworkDetail } from "@/components/ArtworkDetail";
 
 export default function WorkScreen() {
-  const { id } = useLocalSearchParams<{
-    id: string;
+  const { workId } = useLocalSearchParams<{
+    workId: string;
   }>();
 
   const { authToken } = useAuth();
 
   // query art API for the work
-  const workQuery = useWorkByIdQuery(id);
+  const workQuery = useWorkByIdQuery(workId);
   const work = workQuery.data;
 
   // read fav status
-  const favQuery = useFavStatusQuery(id);
+  const favQuery = useFavStatusQuery(workId);
   const isFav = favQuery.data;
 
   // update fav status
@@ -245,7 +245,7 @@ export default function WorkScreen() {
 
 7. Make **(1-direct)/works/[workId].tsx** its own unique screen, rendering `ArtworkDetail` without the favorite button, but full screen and with some buttons to either login (if no `authToken`) or go to the tabs if they are logged in. (HINT: don't overthink it, they're actually the same route).
 
-<summary>Suggested code for **(1-direct)/works/[workId].tsx**</summary>
+<summary>Suggested code for (1-direct)/works/[workId].tsx</summary>
 <details>
 
 ```tsx
@@ -260,12 +260,12 @@ import { ArtworkDetail } from "@/components/ArtworkDetail";
 import { useAuth } from "@/data/hooks/useAuth";
 
 export default function WorkScreen() {
-  const { id } = useLocalSearchParams<{
-    id: string;
+  const { workId } = useLocalSearchParams<{
+    workId: string;
   }>();
 
   // query art API for the work
-  const workQuery = useWorkByIdQuery(id);
+  const workQuery = useWorkByIdQuery(workId);
   const work = workQuery.data;
 
   const { authToken } = useAuth();
@@ -316,7 +316,7 @@ However, in this example, a redirect to the same deep link after the app has alr
 1. Let's try the redirect first without `withAnchor`. In **app/(1-direct)/works/[workId].tsx** add this after all the hooks, but before the return statement:
 ```tsx
  if (authToken) {
-  return <Redirect href={`/(app)/works/${id}`} />;
+  return <Redirect href={`/(app)/works/${workId}`} />;
 }
 ```
 
@@ -353,7 +353,7 @@ This is going to affect the `(tabs)/index` and `(tabs)/exhibits` routes, so lets
 + <TabTrigger name="index" href="/(home)" asChild>
 ```
 
-🏃**Try it** Move around between Home and exhibits. Some stuff is probably working, but it probably looks odd (extra headers on exhibits??) and doesn't really go to all the right places.
+🏃**Try it** Move around between Home and exhibits. Some stuff is probably working, but it probably looks odd sometimes (extra headers on exhibits??) and doesn't really go to all the right places. In particular, going to an Exhibit from Home and then using the back header button looks off.
 
 4. Let's start sharing route information by sharing a layout between `home` and `exhibits`. Move **(tabs)/(exhibits)/exhibits/_layout.tsx** to a new folder, **(tabs)/(home,exhibits)**. Then add a second stack screen to make sure we're hiding the header whenever we're at the `exhibits` index:
 ```tsx
@@ -373,6 +373,12 @@ This is going to affect the `(tabs)/index` and `(tabs)/exhibits` routes, so lets
 At this point, navigating to an exhibit from the home tab should still be moving you over to the Exhibits tab. That's because `exhibits/[exhibitName]` is only under `(exhibits)`. We need it to be under both `(home)` and `(exhibits)` in order to stay within the tab where you entered the route from.
 
 5. Move **(app)/(tabs)/(exhibits)/exhibits** (and all of its contents) to **(home,exhibits)**.
+
+6. If you tried it just now, you might get an error about duplicate tab triggers, because `/exhibits` is now inside of `/(home)`. Update **app(app)/(tabs)/_layout.tsx** to account for the new home for the exhibits tab route:
+```diff
+- <TabTrigger name="exhibits" href="/exhibits" asChild>
++ <TabTrigger name="exhibits" href="/(exhibits)" asChild>
+```
 
 🏃**Try it** Entering an exhibit from either tab should keep you in that tab. That's because the `exhibits/[exhibitName]` is in _both tabs_, and Expo Router is picking the nearest matching route.
 
@@ -398,9 +404,12 @@ export const unstable_settings = {
 
 🏃**Try it** Things should be looking pretty good by now, whether you're navigating around or deep-linking to an exhibit.
 
+> [!TIP]
+> the `exhibits` key in `unstable_settings` refers to the `(group)`, while the `initialRouteName` inside that key refers to the actual route. This is a little confusing, which is why this is considered "unstable" (we're looking into better ways to express complex relationships like these).
+
 ## See the solution
 [Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/4)
 
 ## Next exercise
-[Exercise 5](02-dynamic-routes.md)
+[Exercise 5](05-router-side-quests.md)
 
