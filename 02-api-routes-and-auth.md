@@ -339,7 +339,7 @@ const login = async (email: string, password: string) => {
 🏃**Try it:** Login and logout a few times. Hopefully it all still works! The unique "users" in this not-realistic simulation are actually ID'ed by a hash of the email and password 🙈, so try the same email and password to see your data persist. (Again, please don't do this in real life!)
 
 ## See the solution
-Switch to branch: `02-api-routes-solution`
+[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/2)
 
 ## Next exercise
 [Module 03](03-headless-tabs-and-responsiveness.md)
