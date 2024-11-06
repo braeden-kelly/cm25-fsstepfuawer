@@ -131,3 +131,36 @@ const tabVisual = (
 
 ## Conditionally render tabs: React Navigation edition (after Module 01)
 
+This one's a little trickier. You may need to play with the styles to get it to look OK.
+
+At the most basic level, it's like this:
+
+```tsx
+<Tabs
+  screenOptions={{
+    tabBarStyle: [
+      {
+        display: hideTabs ? "none" : "flex",
+      },
+    ],
+  }}
+>
+// ...
+</Tabs>
+```
+
+In practice, I've also had to absoultely position the bar to get it to not do weird jumping and clipping:
+```tsx
+position: "absolute",
+height: bottom + 70,
+```
+
+And I've had to set backgrounds to eliminate flashing (more applicable on dark backgrounds):
+```tsx
+sceneContainerStyle={{ backgroundColor: /* ... */ }}
+```
+
+Start with the `display` prop and see what you need to do to make it work on all platforms.
+
+## Other stuff you could do
+- the button bar looks a little busy here on mobile web, so you could probably hide it from there, as well.
