@@ -213,7 +213,7 @@ _Breakpoints_ let you put something in front of one of these classes that says i
 
 ```diff
 - <View className="flex-1">
-+ <View className="sm:my-20 sm:w-3/4 sm:self-center">
++ <View className="sm:my-20 sm:w-3/4 sm:self-center flex-1">
 ```
 
 🏃**Try it.** Open an artwork and change the screen size. It should show the modal when the screen is wider, but look like a pretty typical mobile full screen view otherwise.
