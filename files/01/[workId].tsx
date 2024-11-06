@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Pressable } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { Image } from "expo-image";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import { useWorkByIdQuery } from "@/data/hooks/useWorkByIdQuery";

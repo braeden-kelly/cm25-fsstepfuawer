@@ -12,7 +12,7 @@ Add a backend to your Expo Router project that can handle authentication and sto
 - Finish wiring up the API route that reads and writes favorite status to artworks
 - Add an API route for logging in (we'll simulate a simple username/password login)
 - Store something in local storage to indicate if you are logged in or logged out
-- Redirect out of the `(app)` route if the user is not logged in and they try to navigate to that atea, sending them to the login screen.
+- Redirect out of the `(app)` route if the user is not logged in and they try to navigate to that area, sending them to the login screen.
 
 ### Helpful links
 - TBD
@@ -30,7 +30,7 @@ An API route is defined by **+api** in the filename. API routes implement GET, P
 
 ### Add the GET request
 
-1. Let's add **app/api/works/[workId]/fav+api.ts** with that GET function:
+1. Create a folder called**[workId]** in **app/api/works/[workId]** and a file called **fav+api.ts** in **app/api/works/[workId]/fav+api.ts**. Open this file and add the GET function:
 
 ```ts
 import { Database } from '@/data/api/database';
@@ -43,7 +43,7 @@ export async function GET(request : Request, { workId }: Record<string, string>)
   return Response.json(favStatus);
 }
 ```
-Don't sweat what the "database" is right now, the key lesson here is reading the request, doing something withit, and returning a response. If you look at it, you'll probably be horrified, as it's just a bunch of text files.
+Don't sweat what the "database" is right now, the key lesson here is reading the request, doing something with it, and returning a response. If you look at it, you'll probably be horrified, as it's just a bunch of text files.
 
 🏃**Try it.**
 ```
@@ -83,7 +83,7 @@ To keep this clean, these queries are encapsulated in their own custom hooks in 
   const isFav = favQuery.data;
 ```
 
-Follow `useFavStatusQuery()` to its file inside **data/hooks**. These are standard RESTful API's that are called via the standard `fetch` API under the hood. Let's update **useFavStatusQuery.ts** to implement the actual GET request via fetch:
+Follow `useFavStatusQuery()` to its file inside **data/hooks/useFavStatusQuery.ts**. These are standard RESTful API's that are called via the standard `fetch` API under the hood. Let's update **useFavStatusQuery.ts** to implement the actual GET request via fetch:
 
 ```diff
 queryFn: async () => {
@@ -124,7 +124,7 @@ export const useFavStatusQuery = function(workId: string) {
 
 </details>
 
-Let's do the same with **useFavStatusMutation.ts**, implementing the POST:
+Let's do the same with **data/hooks/useFavStatusMutation.ts**, implementing the POST:
 
 ```diff
 mutationFn: async (favStatus: { workId: string; status: boolean }) => {
@@ -155,7 +155,7 @@ export const useFavStatusMutation = function () {
   // Queries
   const query = useMutation({
     mutationFn: async (favStatus: { workId: string; status: boolean }) => {
-      const { id, status } = favStatus;
+      const { workId, status } = favStatus;
       const response = await fetch(`/api/works/${workId}/fav`, {
         method: "POST",
         headers: {
@@ -213,7 +213,7 @@ export default function layout() {
   return (
 ```
 
-Also import `useAuth` from `@/data/hooks/useAuth` and `Redirect` from `expo-router`.
+Don't forget to `import { useAuth } from "@/data/hooks/useAuth";` and `import { Redirect } from "expo-router";`
 
 🏃**Try it:** You should now be "trapped" at the login page. In a browser, try setting another URL. It should not work.
 
@@ -262,7 +262,8 @@ export default function LoginScreen() {
   );
 }
 ```
-(import `useRouter` from `expo-router`)
+
+Don't forget to `import { useRouter } from "expo-router";`
 
 `replace` removes history from the stack and ensures that you can't go back with a back button or swipe gesture.
 
@@ -289,7 +290,7 @@ export async function POST(request : Request) {
 }
 ```
 
-2. Update `login` inside of **useAuth.ts** to call this API:
+2. Update `login` inside of **data/hooks/useAuth.ts** to call this API:
 ```diff
 const login = async (email: string, password: string) => {
 -  await setAuthToken("whatever");
@@ -328,7 +329,7 @@ const login = async (email: string, password: string) => {
 
 </details>
 
-3. Update all the routes inside **app/api/works** to read the auth token from the header:
+3. Update both of the the requests inside **app/api/works/[workId]/fav+api.ts** to read the auth token from the header:
 ```diff
 - const database = new Database();
 + const database = new Database(request.headers.get('authToken'));

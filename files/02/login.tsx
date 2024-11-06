@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useAuth } from "@/data/hooks/useAuth";
-import { useRouter } from "expo-router";
 import { Button } from "@/components/Button";
 
 export default function LoginScreen() {

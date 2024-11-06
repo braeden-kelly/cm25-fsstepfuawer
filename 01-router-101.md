@@ -5,7 +5,7 @@
 Run the app and start exploring file-based routing by adding a few routes of your own.
 
 ### Concepts
-- Adding tab routes in Expo Router
+- Adding tab routes in [Expo Router](https://docs.expo.dev/router/introduction/)
 - Adding dynamic stack routes
 - How layout files can customize the display and behavior of routes
 
@@ -28,7 +28,7 @@ For the full experience, make sure you have the app running on both your phone a
 3. Scan the QR Code on Expo Go on your phone, or press `i` to open in the iOS simulator.
 4. Press `w` to run in your web browser.
 
-Note that the app isn't entirely responsive yet (you're be working on that!). So, it might be easiest to shrink the app down to mobile size by opening Chrome Devtools.
+Note that the app isn't entirely responsive yet (you're be working on that!). So, it might be easiest to shrink the app down to mobile size by opening Chrome Devtools or resizing your browser window.
 
 ## Exercise 1: Routing and layout basics
 We're adding a new screen with info about visiting the museum... but where? Let's try a few places, and learn some Expo Router basics along the way.
@@ -37,10 +37,12 @@ _This short exercise is helpful if you're pretty new to Expo Router, but doesn't
 
 1. Create a **visit.tsx** file in the **(app)** folder. Copy our [**visit.tsx** starter here](/files/01/visit.tsx) for its contents. `(app)` is a _route group_, representing the "logged-in" experience of the app (this implies a "logged out" experience; we'll get back to that).
 2. In your web browser, try navigating to it by using the URL bar, by entering: `http://localhost:8081/visit`. Notice how the route group folder doesn't factor in the URL. These are just for organizing routes and defining their behavior without affecting the URL.
-3. Try adding a `Link` to the "visit" page. The very top of the **index** page in **app/(app)/(tabs)/index.tsx** will work:
+3. Try adding a `Link` to the "visit" page. The header of the **index** page in **app/(app)/(tabs)/index.tsx** will work:
 ```tsx
 <Link href="/visit">Visit</Link>
 ```
+Don't forget to `import { Link } from "expo-router";`
+
 4. Tap on the link in the browser or the mobile app. It should take you to the "visit" page, and you should be able to go back to the main tabs. This is because the **\_layout.tsx** inside the **(app)** folder groups the routes at this level into a _stack navigator_.
 5. Get rid of that `Link` - we're going to put it somewhere else
 
@@ -53,7 +55,7 @@ This route will render if your app navigates to a route that doesn't exist.
 We've decided it would be best to have information for visitors as a separate tab.
 
 1. Create a **visit.tsx** file in the **(app)/(tabs)** folder. Copy our [**visit.tsx** starter here](/files/01/visit.tsx) for its contents. (or, if you already created **visit.tsx** in Exercise 1, just drag it into **(tabs)**)
-2. Your app should live-reload to show a new tab. Check out **(app)/(tabs)/_layout.tsx**. This layout defines a tab navigator, so it's saying any routes at this level should be arranged as tabs.
+2. Refresh your browse / reload the app to see the new tab. Now check out **(app)/(tabs)/_layout.tsx**. This layout defines a tab navigator, so it's saying any routes at this level should be arranged as tabs.
 3. The Visit tab looks pretty basic right now. Not the right icon or text. We can information in **_layout.tsx** to change the behavior and appearance of the tab. Add this between the exhibits and profile tab:
 ```tsx
 <Tabs.Screen
@@ -76,14 +78,13 @@ There's already a dynamic route in the app: `/exhibits/[exhibitName]`. When you 
 Notice how the artworks don't go anywhere yet when you click on them. Let's fix that.
 
 1. Create the file **app/(app)/works/[workId].tsx** (add the extra folder, of course). Use the [**[workId].tsx** starter here](/files/01/[workId].tsx).
-2. In **Artwork.tsx** (shared by both screens), wrap the artwork in a `Link`, navigating to `works/[workId]`:
+2. In **Artwork.tsx** (shared by both screens), wrap the artwork `Pressable` in a `Link`, navigating to `works/[workId]`:
 ```diff
-renderItem={({ item }) => (
 +  <Link asChild href={`/works/${artwork.id}`}>
-    <Pressable>
-    // ...
-+    </Pressable>
-  </Link>
+     <Pressable className="flex-row sm:flex-col gap-x-2 h-48 sm:h-96">
+        // ...
+     </Pressable>
++  </Link>
 ```
 
 🏃**Try it.** You should be able to navigate to artwork now. Try a few.
@@ -98,7 +99,7 @@ Oh wait, it's going to the same work every time. That's because we didn't read t
   }>();
 ```
 
-(import `useLocalSearchParams` from `expo-router`)
+Don't forget to `import { useLocalSearchParams } from "expo-router";`
 
 🏃**Try it.** You should now be able to navigate to the correct artwork from both the Home and Exhibits tabs.
 
@@ -120,14 +121,15 @@ By now, you're probably quite annoyed by that header with route garbage at the t
 Notice that not everything in that tabs route is just a single file. There's the **exhibits** folder, with multiple routes. This is a stack nested inside a tab.
 
 Let's experiment with some different scenarios here. **Refresh the browser / shake and refresh your app before each one to reset navigation history**:
-a. Exhibits tab -> click on an exhibit -> go back (pretty normal stack-in-tabs)
-b. Exhibits tab -> Home tab -> click on an exhibit name above an artwork -> go back (normal-ish, going back to the index of Exhibits instead of Home is interesting)
-c. Home tab -> click on an exhibit -> go back (oh wait, no back button, that's bad!)
-d. (browser-only) Home tab -> click on an exhibit -> reload page (stuck on a single exhibit, real bad!)
 
-Let's start with c). We'll fix it with kind of a cludge for now, maybe we'll make it better later. What's going on is that you're navigating to a specific screen inside of a stack. The stack has no idea that it was supposed to put another screen under it, so it didn't.
+- **(A)** Exhibits tab -> click on an exhibit -> go back (pretty normal stack-in-tabs)
+- **(B)** Exhibits tab -> Home tab -> click on an exhibit name above an artwork -> go back (normal-ish, going back to the index of Exhibits instead of Home is interesting)
+- **(C)** Home tab -> click on an exhibit -> go back (oh wait, no back button, that's bad!)
+- **(D)** (browser-only) Home tab -> click on an exhibit -> reload page (stuck on a single exhibit, real bad!)
 
-4. For the `exhibits` route to render its index when the app is loaded by telling React Navigation to load all of the tabs when the app is loaded. Use the `lazy` prop in **(app)/(tabs)/_layout.tsx**:
+Let's start with **(C)** . We'll fix it with kind of a cludge for now, maybe we'll make it better later. What's going on is that you're navigating to a specific screen inside of a stack. The stack has no idea that it was supposed to put another screen under it, so it didn't.
+
+1. For the `exhibits` route to render its index when the app is loaded by telling React Navigation to load all of the tabs when the app is loaded. Use the `lazy` prop in **(app)/(tabs)/_layout.tsx**:
 
 ```diff
 <Tabs
@@ -136,12 +138,11 @@ Let's start with c). We'll fix it with kind of a cludge for now, maybe we'll mak
     headerShown: false,
 +    lazy: false,
   }}
->
 ```
 
 Meanwhile, the `initialRouteName` configuration lets you specify a child route that should exist in history _if the app is first loaded on one of its sibling routes_. That sounds tailor-made for scenario d)
 
-4. Add the following to **(app)/exhibits/_layout.tsx**:
+2. Add the following to **(app)/(tabs)/exhibits/_layout.tsx**:
 ```tsx
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -151,7 +152,7 @@ export const unstable_settings = {
 
 This says that, when inside the **exhibits** route, the index should be the first route. The ensures that, even if you go directly to a exhibit, the exhibits list will be underneath it.
 
-🏃**Try it.** c) and d) should work better now.
+🏃**Try it.** **(C)** and **(D)** should work better now.
 
 ## Exercise 5: A little bit of responsiveness
 Head over to your browser, and make the window wide. Now open an artwork. Real "blown up mobile app" vibes, right? Let's use some navigator props and creative styling to make this a centered modal on web, floating above the underlying content.
@@ -159,6 +160,7 @@ Head over to your browser, and make the window wide. Now open an artwork. Real "
 1. In **app/(app)/layout.tsx**, add this code just inside the options for this screen:
 ```diff
 <Stack.Screen
+   name="works/[workId]"
 -  options={{
 -    headerShown: false,
 -  }}
@@ -177,7 +179,7 @@ Head over to your browser, and make the window wide. Now open an artwork. Real "
 />
 ```
 
-(don't forget to import `Platform` from `react-native`)
+Don't forget to `import { Platform } from "react-native";`
 
 <details>
   <summary>Expand to just get the whole function for easy copying</summary>
@@ -207,7 +209,7 @@ Nativewind works by letting you use a standard set of descriptive CSS classes to
 
 _Breakpoints_ let you put something in front of one of these classes that says it only applies in certain scenarios. So, `sm:bg-black` means, "only set the background to black when the width is greater than the "small" size breakpoint (>640 device pixels)". Nativewind syntax defaults to "mobile" size. You only use breakpoints when targeting larger screens.
 
-3. Let's update the top-level `View` in **[workId].tsx** so it is centered and only takes up some of the screen when the screen is wider, so we can see our modal effect in action.
+2. Let's update the top-level `View` in **[workId].tsx** so it is centered and only takes up some of the screen when the screen is wider, so we can see our modal effect in action.
 
 ```diff
 - <View className="flex-1">
@@ -216,7 +218,7 @@ _Breakpoints_ let you put something in front of one of these classes that says i
 
 🏃**Try it.** Open an artwork and change the screen size. It should show the modal when the screen is wider, but look like a pretty typical mobile full screen view otherwise.
 
-4. However, it doesn't look like a very compelling modal because the background behind it doesn't change. Let's add some shade by wrapping everything in **[workId].tsx** in another view that adds said shade:
+3. However, it doesn't look like a very compelling modal because the background behind it doesn't change. Let's add some shade by wrapping everything in **[workId].tsx** in another view that adds said shade:
 ```tsx
 <View
   className={classNames(
@@ -230,11 +232,13 @@ _Breakpoints_ let you put something in front of one of these classes that says i
 </View>
 ```
 
+Don't forget to `import classNames from "classnames";` and `import { Platform } from "react-native";`
+
 > [!NOTE]  
-> Hello, new friend! `classNames` can be used to organize all these bits of Nativewind! Import it as such: `import classNames from "classnames";`
+> Hello, new friend! `classNames` is a utility function, helpful for organizing all these bits of Nativewind!
 
 ### How would I do this without Nativewind?
-There's some fancy media query hooks for React Native that give you programatic access to breakpoints, which you can then use inline in `style`. It's also pretty straightforward to roll your own:
+There's some fancy media query hooks for React Native that give you programmatic access to breakpoints, which you can then use inline in `style`. It's also pretty straightforward to roll your own:
 
 ```ts
 import { useWindowDimensions } from 'react-native';

@@ -23,7 +23,8 @@ We want there to basically be two ways to access `/works/[workId]`:
 1. When you're logged in and browsing, as a modal on top of the tab layout.
 2. When you're receiving a direct link, as its own separate fullscreen layout.
 
-> [!NOTE] Starting from #2, we could branch off difference scenarios such as, when you're logged in, it goes straight into #1 and only shows #2 when you're not logged in, but we're going to focus for now on making #2 work in all cases.
+> [!NOTE]
+> Starting from #2, we could branch off difference scenarios such as, when you're logged in, it goes straight into #1 and only shows #2 when you're not logged in, but we're going to focus for now on making #2 work in all cases.
 
 This is where _route groups_ can help. They let us define what is in essance the same URL (as far as the user is concerned) in multiple places:
 - `app/(app)/works/[workId]` has an outward-facing URL of `/works/[workId]`
@@ -64,7 +65,8 @@ But `(app)` is before `(direct)` in the alphabet, so `(app)` wins. Let's fix tha
 
 🏃**Try it** In your browser, start at the initial route, open a work. Now copy that URL and open it in a new tab. Hopefully it goes to the `(direct)` version now.
 
-> [!NOTE] So, why does it go to the `(app)` version still if I start from the initial route? That's because Expo Router will look for the _nearest-matching_ route before it goes back through the top and looks at alphabetical order. So, order is important, but proximity > order.
+> [!NOTE]
+> So, why does it go to the `(app)` version still if I start from the initial route? That's because Expo Router will look for the _nearest-matching_ route before it goes back through the top and looks at alphabetical order. So, order is important, but proximity > order.
 
 ### Cleaning things up
 Let's make this new direct link look like something intentional and not just a broken modal.
@@ -160,7 +162,7 @@ export const ArtworkDetail = ({ work }: ArtworkDetailProps) => {
 6. Update **(app)/works/[workId].tsx** to use `ArtworkDetail` (replace the `Scrollview` and everything inside it, pass the `work`).
 
 <details>
-  <summary>Suggested code for [workId].tsx:</summary>
+  <summary>Suggested code for **[workId].tsx**:</summary>
 
 ```tsx
 import { View, Pressable, Platform } from "react-native";
@@ -245,7 +247,7 @@ export default function WorkScreen() {
 
 7. Make **(1-direct)/works/[workId].tsx** its own unique screen, rendering `ArtworkDetail` without the favorite button, but full screen and with some buttons to either login (if no `authToken`) or go to the tabs if they are logged in. (HINT: don't overthink it, they're actually the same route).
 
-<summary>Suggested code for (1-direct)/works/[workId].tsx</summary>
+<summary>Suggested code for **(1-direct)/works/[workId].tsx**</summary>
 <details>
 
 ```tsx
@@ -319,6 +321,8 @@ However, in this example, a redirect to the same deep link after the app has alr
   return <Redirect href={`/(app)/works/${workId}`} />;
 }
 ```
+
+Don't forget to `import { Redirect } from "expo-router";`
 
 🏃**Try it** If you're logged in, now reloading the page on a work will take you to the same place you were, but... you can't go anywhere else. No back button, no tabs. 
 
