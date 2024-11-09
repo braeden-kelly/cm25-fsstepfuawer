@@ -14,81 +14,102 @@ We will need this, as most of the tab layout will go inside the `Drawer` as chil
 > [!NOTE]
 > If you have a route in your tabs folder but it doesn't have a trigger, you won't be able to navigate to it! Could be useful for authentication states...
 
-1. Setup two separate variables, `tabVisual` (where we'll define buttons) and `tabList` (where we'll define triggers)
+All steps below are within **(tabs)/_layout.tsx**.
 
-2. Update the return statement to render both variables:
+1. Follow the [split triggers guide](shared/split-triggers.md)
 
-```diff
-<Tabs className="flex-1 sm:flex-col-reverse">
-  <View className="flex-1">
-    <TabSlot />
-  </View>
--  {tabs}
-+  {tabList}
-+  {tabVisual}
-</Tabs>
-```
-
-3. The `tabList` will have just the triggers, no buttons, but the triggers will define the `href` to show that they're the source of truth for what route a trigger navigates to:
+2. Add some imports (run `npm install react-native-drawer-layout`):
 
 ```tsx
-const tabList = (
-  <TabList>
-    <TabTrigger name="index" href="/" />
-    <TabTrigger name="exhibits" href="/exhibits" reset="always" />
-    <TabTrigger name="visit" href="/visit" />
-    <TabTrigger name="profile" href="/profile" />
-  </TabList>
-);
+import { useMediaQuery } from "@/constants/useMediaQuery";
+import { Drawer } from "react-native-drawer-layout";
+import { FontAwesome } from "@expo/vector-icons";
 ```
 
-4. Meanwhile, `tabVisual` will be a list of triggers with buttons inside. No `href` will be defined, as they will use the `href` from the `tabList` trigger based on the `name`. Like this:
+3. Add a state variable for opening/closing the drawer and grab `isModule` to detect small screens:
 
 ```tsx
-<TabTrigger name="profile" asChild>
-  <TabButton icon="person">Profile</TabButton>
-</TabTrigger>
+const { isMobile } = useMediaQuery();
+
+const [open, setOpen] = React.useState(false);
 ```
 
-Do this for all the buttons, enclosing them in a `View`. There will be an extra style you'll need to add to account for a default style that was inside `TabList`.
-
-<summary>If you need help, here's the solution for what's inside of tabVisual</summary>
-<details>
+4. Before the return statement already there, let's add a separate return for our mobile web UI, including the drawer:
 
 ```tsx
-const tabVisual = (
-    <View
-      className={classNames(
-        "flex-row justify-between",
-        "py-3 sm:py-6",
-        "px-6 sm:px-8",
-        "mx-2 sm:mx-0",
-        "sm:justify-end sm:gap-x-4 sm:shadow-sm",
-        "bg-white",
-        "bottom-safe-offset-2 sm:bottom-safe-offset-0", // keep the tabs above safe ares
-        "rounded-full sm:rounded-none", // round the corners
-        "absolute right-0 left-0 sm:relative", // position above content
-        "shadow-sm sm:shadow-none" // yum, shadows!
-      )}
+if (isMobile && Platform.OS === "web") {
+  return (
+    <Drawer
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      renderDrawerContent={() => {
+        return (
+          
+        );
+      }}
     >
-      <TabTrigger name="index" asChild>
+      <View className="flex-1">
+        <View className="flex-row justify-between items-center py-3 px-6">
+          <FontAwesome name="bars" size={24} onPress={() => setOpen(true)} />
+          <View className={classNames("h-10 w-52")}>
+            <Image
+              source={require("@/assets/images/logo.svg")}
+              className="w-full h-full"
+            />
+          </View>
+        </View>
+        <Tabs className="flex-1">
+          <View className="flex-1">
+            <TabSlot />
+          </View>
+          {tabList}
+        </Tabs>
+      </View>
+    </Drawer>
+  );
+}
+```
+
+At this point, you should be able to open the drawer (but nothing's there).
+
+5. You could try adding the `tabVisual` variable to `renderDrawerContent`. Spoiler alert: you get an error because the tab triggers aren't inside of `Tabs`. How do we solve this chicken/egg problem?
+
+6. Use plain `Link` components (import from `expo-router`):
+
+```tsx
+renderDrawerContent={() => {
+  return (
+    <View>
+      <Link href="./" asChild>
         <TabButton icon="museum">Home</TabButton>
-      </TabTrigger>
-      <TabTrigger name="exhibits" asChild reset="always">
+      </Link>
+      <Link href="./exhibits" asChild>
         <TabButton icon="palette">Exhibits</TabButton>
-      </TabTrigger>
-      <TabTrigger name="visit" asChild>
+      </Link>
+      <Link href="./visit" asChild>
         <TabButton icon="map">Visit</TabButton>
-      </TabTrigger>
-      <TabTrigger name="profile" asChild>
+      </Link>
+      <Link href="./profile" asChild>
         <TabButton icon="person">Profile</TabButton>
-      </TabTrigger>
+      </Link>
     </View>
   );
+}}
 ```
 
-</details>
-</summary>
+At this point, you should be able to open new tabs. Sorry the tabs look rough, though! The drawer doesn't close, either, when you navigate.
 
-## Bless this mess - a hasty refactor
-The only reason we did that refactor above 
+7. Setup an effect to make the drawer change when the route changes. Import `usePathname` from `expo-router`:
+
+```tsx
+const pathname = usePathname();
+
+  useEffect(() => {
+    if (isMobile && Platform.OS === "web") {
+      setOpen(false);
+    }
+  }, [pathname, isMobile]);
+```
+
+8. If you want to make the drawer tabs look nice, that's up to you!
