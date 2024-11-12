@@ -14,9 +14,6 @@ Fully-customize the tab bar so its much easier to move around and attach custom 
 - Move the tab bar to the top of the page when on desktop web and make it look more like simple text header links than a mobile tab bar
 - Automatically go back to the top of the stack when you navigate to Exhibits.
 
-### Helpful links
-- TBD
-
 # Exercises
 
 ## Exercise 1: Intro to headless tabs
