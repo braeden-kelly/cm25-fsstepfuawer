@@ -74,7 +74,7 @@ Let's make this new direct link look like something intentional and not just a b
 5. Refactor everything inside of the `ScrollView` (including the `ScrollView` itself) in **app/(app)/works/[workId].tsx** into a separate `ArtworkDetail` component that you can put inside a new **components/ArtworkDetail.tsx** file. The component will need to take at least one parameter, the `work` object that's returned from the `useWorkByIdQuery()` hook (feel free to do as Keith does and use the `any` type, he won't mind!).
 
 <details>
-  <summary>If you're running short on time or just don't feel like doing that, here's a suggested `ArtworkDetail` component you can paste right in:</summary>
+  <summary>If you're running short on time or just don't feel like doing that, here's a suggested ArtworkDetail component you can paste right in:</summary>
 
 ```tsx
 import React from "react";
@@ -162,7 +162,7 @@ export const ArtworkDetail = ({ work }: ArtworkDetailProps) => {
 6. Update **(app)/works/[workId].tsx** to use `ArtworkDetail` (replace the `Scrollview` and everything inside it, pass the `work`).
 
 <details>
-  <summary>Suggested code for **[workId].tsx**:</summary>
+  <summary>Suggested code for [workId].tsx:</summary>
 
 ```tsx
 import { View, Pressable, Platform } from "react-native";
@@ -247,7 +247,7 @@ export default function WorkScreen() {
 
 7. Make **(1-direct)/works/[workId].tsx** its own unique screen, rendering `ArtworkDetail` without the favorite button, but full screen and with some buttons to either login (if no `authToken`) or go to the tabs if they are logged in. (HINT: don't overthink it, they're actually the same route).
 
-<summary>Suggested code for **(1-direct)/works/[workId].tsx**</summary>
+<summary>Suggested code for (1-direct)/works/[workId].tsx</summary>
 <details>
 
 ```tsx
@@ -336,6 +336,19 @@ Recall earlier that, before you added the `(1-direct)` route, that a direct link
 +  return <Redirect href={`/(app)/works/${id}`} withAnchor />;
 }
 ```
+
+3. Oh wait, see those red squiggles? This API isn't _quite_ available yet. I expect you'll be able to use the `Redirect` component soon for this. For now you can do it like this, it's about the same. Maybe you lose 1 tick in performance:
+
+```tsx
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authToken) {
+      router.replace(`/(app)/works/${workId}`, { withAnchor: true });
+    }
+  }, [authToken, router, workId]);
+```
+(import `useRouter` from `expo-router`)
 
 🏃**Try it** If you're logged in, now reloading the page on a work will take you to the same place you were, and everything works as before!
 
