@@ -14,8 +14,6 @@ Use groups and group precedence to make the same route go to two different place
 - Create an alternate entry point into `works/[workId]` that lets anyone look at a work of art shared by a user, even if they're not logged in (Instagram-style)
 - Turn `/exhibits/[exhibit]` into a shared route that is a sibling of both the Home and Exhibits tabs, so it pushes onto either while staying within the same tab. However, if you share a link to an exhibit, it will always open the Exhibits tab.
 
-### Helpful links
-
 # Exercises
 
 ## Exercise 1: Instagram-style "public post" page
