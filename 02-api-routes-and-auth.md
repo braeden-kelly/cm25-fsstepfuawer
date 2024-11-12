@@ -14,9 +14,6 @@ Add a backend to your Expo Router project that can handle authentication and sto
 - Store something in local storage to indicate if you are logged in or logged out
 - Redirect out of the `(app)` route if the user is not logged in and they try to navigate to that area, sending them to the login screen.
 
-### Helpful links
-- TBD
-
 # Exercises
 
 ## Exercise 1. Add the `api/works/[workId]/fav` API route
