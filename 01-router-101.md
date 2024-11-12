@@ -15,9 +15,6 @@ Run the app and start exploring file-based routing by adding a few routes of you
 - Add the `works/[workId]` dynamic route so you can navigate to individual works of art
 - In a very slight nod to responsive design, customize the `works/[workId]` route to use a transparent modal, centering the artwork in the middle of the screen on larger screens.
 
-### Helpful links
-- TBD
-
 # Exercises
 
 ## Exercise 0: Get this thing running
