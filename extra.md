@@ -21,3 +21,8 @@ npx uri-scheme exp://[your computer's ip address]:8081/--/works/137259
 
 ### Modal looks terrible on iPad
 Oops, we didn't set the transparency right when the screen is wider but it's on mobile
+
+## Other
+
+### Native Bottom tabs
+Doing headless for web and [native bottom tabs](https://okwasniewski.github.io/react-native-bottom-tabs/docs/getting-started/quick-start.html) would be the perfect pairing (development build required)
