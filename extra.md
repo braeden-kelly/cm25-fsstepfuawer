@@ -7,8 +7,9 @@ You could use your web browser with the `exp://` extension, or use this from you
 ```
 exp://[your computer's ip address]:8081/--/works/137259
 ```
-## Fixing the red squiggles in the tab navigator (module 01):
+## Module 01
 
+### Fixing the red squiggles in the tab navigator
 ```tsx
 <Tabs
   screenOptions={{
@@ -17,3 +18,6 @@ exp://[your computer's ip address]:8081/--/works/137259
   }}
 >
 ```
+
+### Modal looks terrible on iPad
+Oops, we didn't set the transparency right when the screen is wider but it's on mobile
