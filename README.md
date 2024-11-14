@@ -34,10 +34,6 @@ Do these steps to ensure you'll be ready to go when the workshop starts:
 > [!TIP]
 > Pull changes from the forked starter repo and run `npm install` again right before the workshop, as there may be fixes and version bumps!
 
-## Other resources
-
-TBD
-
 ## Connect
 - [Bluesky](https://bsky.app/profile/keith.bsky.social)
 - [LinkedIn](https://www.linkedin.com/in/keith-kurak/)
