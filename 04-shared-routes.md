@@ -335,7 +335,7 @@ Recall earlier that, before you added the `(1-direct)` route, that a direct link
 }
 ```
 
-3. Oh wait, see those red squiggles? This API isn't _quite_ available yet. I expect you'll be able to use the `Redirect` component soon for this. For now you can do it like this, it's about the same. Maybe you lose 1 tick in performance:
+3. Oh wait, see those red squiggles? This API isn't _quite_ available yet ([so close!](https://github.com/expo/expo/pull/32847)). I expect you'll be able to use the `Redirect` component soon for this. For now you can do it like this, it's about the same. Maybe you lose 1 tick in performance:
 
 ```tsx
   const router = useRouter();
