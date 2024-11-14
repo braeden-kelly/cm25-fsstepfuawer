@@ -69,7 +69,7 @@ You could test this out right now with something like Postman, but we're about t
 ## Exercise 2. Call the API route (GET and POST) from your client code
 The favorite button on a work of art (the star icon) doesn't do anything yet, but there are placeholders already for reading and writing favorites status when a work is rendered.
 
-To keep this clean, these queries are encapsulated in their own custom hooks in **/app/(app)/works/[workId]/index.tsx**, which wrap Tanstack query calls:
+To keep this clean, these queries are encapsulated in their own custom hooks in **/app/(app)/works/[workId].tsx**, which wrap Tanstack query calls:
 ```tsx
  // query art API for the work
   const workQuery = useWorkByIdQuery(id);
