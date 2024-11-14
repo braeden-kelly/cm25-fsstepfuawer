@@ -24,5 +24,8 @@ Oops, we didn't set the transparency right when the screen is wider but it's on 
 
 ## Other
 
+### Incrementality adopt expo
+https://expo.dev/blog/how-to-incrementally-adopt-expo
+
 ### Native Bottom tabs
 Doing headless for web and [native bottom tabs](https://okwasniewski.github.io/react-native-bottom-tabs/docs/getting-started/quick-start.html) would be the perfect pairing (development build required)
