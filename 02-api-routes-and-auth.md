@@ -217,7 +217,7 @@ Don't forget to `import { useAuth } from "@/data/hooks/useAuth";` and `import { 
 ### Provide a key (let in logged-in users)
 The "Log in" button on the login page is already wired up to call the `login` function, which sets the auth token, but a) `login` itself doesn't do anything, and b) it doesn't navigate anywhere. Let's fix that:
 
-3. In **api/hooks/useAuth.ts**, you'll see we already have a Jotai store set up to store `authToken`, and that's wired to async storage. But there's nothing in the `login` function. Let's just set the token for now:
+3. In **data/hooks/useAuth.ts**, you'll see we already have a Jotai store set up to store `authToken`, and that's wired to async storage. But there's nothing in the `login` function. Let's just set the token for now:
 ```diff
 const login = async (email: string, password: string) => {
 +    await setAuthToken("whatever");
