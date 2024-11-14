@@ -5,7 +5,7 @@ Just a fun collection of things learned along the way...
 You could use your web browser with the `exp://` extension, or use this from your terminal (when connected to a simulator or over ADB):
 
 ```
-exp://[your computer's ip address]:8081/--/works/137259
+npx uri-scheme exp://[your computer's ip address]:8081/--/works/137259
 ```
 ## Module 01
 
