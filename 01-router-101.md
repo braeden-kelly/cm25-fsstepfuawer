@@ -52,7 +52,7 @@ This route will render if your app navigates to a route that doesn't exist.
 We've decided it would be best to have information for visitors as a separate tab.
 
 1. Create a **visit.tsx** file in the **(app)/(tabs)** folder. Copy our [**visit.tsx** starter here](/files/01/visit.tsx) for its contents. (or, if you already created **visit.tsx** in Exercise 1, just drag it into **(tabs)**)
-2. Refresh your browse / reload the app to see the new tab. Now check out **(app)/(tabs)/_layout.tsx**. This layout defines a tab navigator, so it's saying any routes at this level should be arranged as tabs.
+2. Refresh your browser / reload the app to see the new tab. Now check out **(app)/(tabs)/_layout.tsx**. This layout defines a tab navigator, so it's saying any routes at this level should be arranged as tabs.
 3. The Visit tab looks pretty basic right now. Not the right icon or text. We can information in **_layout.tsx** to change the behavior and appearance of the tab. Add this between the exhibits and profile tab:
 ```tsx
 <Tabs.Screen

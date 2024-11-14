@@ -27,7 +27,7 @@ An API route is defined by **+api** in the filename. API routes implement GET, P
 
 ### Add the GET request
 
-1. Create a folder called**[workId]** in **app/api/works/[workId]** and a file called **fav+api.ts** in **app/api/works/[workId]/fav+api.ts**. Open this file and add the GET function:
+1. Create a folder called **[workId]** in **app/api/works/[workId]** and a file called **fav+api.ts** in **app/api/works/[workId]/fav+api.ts**. Open this file and add the GET function:
 
 ```ts
 import { Database } from '@/data/api/database';
