@@ -7,3 +7,13 @@ You could use your web browser with the `exp://` extension, or use this from you
 ```
 exp://[your computer's ip address]:8081/--/works/137259
 ```
+## Fixing the red squiggles in the tab navigator (module 01):
+
+```tsx
+<Tabs
+  screenOptions={{
+    sceneStyle: { backgroundColor: colors.white },
+    headerShown: false,
+  }}
+>
+```
