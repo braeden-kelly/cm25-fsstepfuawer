@@ -117,27 +117,14 @@ By now, you're probably quite annoyed by that header with route garbage at the t
 ## Exercise 4: Nested routes
 Notice that not everything in that tabs route is just a single file. There's the **exhibits** folder, with multiple routes. This is a stack nested inside a tab.
 
-Let's experiment with some different scenarios here. **Refresh the browser / shake and refresh your app before each one to reset navigation history**:
+Let's experiment with a few scenarios here. **Refresh the browser / shake and refresh your app before each one to reset navigation history**:
 
-- **(A)** Exhibits tab -> click on an exhibit -> go back (pretty normal stack-in-tabs)
-- **(B)** Exhibits tab -> Home tab -> click on an exhibit name above an artwork -> go back (normal-ish, going back to the index of Exhibits instead of Home is interesting)
-- **(C)** Home tab -> click on an exhibit -> go back (oh wait, no back button, that's bad!)
-- **(D)** (browser-only) Home tab -> click on an exhibit -> reload page (stuck on a single exhibit, real bad!)
+- **(A)** Exhibits tab -> click on an exhibit -> go back
+- **(B)** (browser-only) Home tab -> click on an exhibit -> reload page -> go back (can you do it?)
 
-Let's start with **(C)** . We'll fix it with kind of a cludge for now, maybe we'll make it better later. What's going on is that you're navigating to a specific screen inside of a stack. The stack has no idea that it was supposed to put another screen under it, so it didn't.
+You might have had some problems with B). Expo Router has no idea that the "first" page of the Exhibits tab should always be stacked below `[exhibitName]`, even when the app is reloaded on the page. How could it?
 
-1. For the `exhibits` route to render its index when the app is loaded by telling React Navigation to load all of the tabs when the app is loaded. Use the `lazy` prop in **(app)/(tabs)/_layout.tsx**:
-
-```diff
-<Tabs
-  sceneContainerStyle={{ backgroundColor: colors.white }}
-  screenOptions={{
-    headerShown: false,
-+    lazy: false,
-  }}
-```
-
-Meanwhile, the `initialRouteName` configuration lets you specify a child route that should exist in history _if the app is first loaded on one of its sibling routes_. That sounds tailor-made for scenario d)
+The `initialRouteName` configuration lets you specify a child route that should exist in history _if the app is first loaded on one of its sibling routes_. That sounds tailor-made for B).
 
 2. Add the following to **(app)/(tabs)/exhibits/_layout.tsx**:
 ```tsx
@@ -149,7 +136,7 @@ export const unstable_settings = {
 
 This says that, when inside the **exhibits** route, the index should be the first route. The ensures that, even if you go directly to a exhibit, the exhibits list will be underneath it.
 
-🏃**Try it.** **(C)** and **(D)** should work better now.
+🏃**Try it.** **(B)** should work better now.
 
 ## Exercise 5: A little bit of responsiveness
 Head over to your browser, and make the window wide. Now open an artwork. Real "blown up mobile app" vibes, right? Let's use some navigator props and creative styling to make this a centered modal on web, floating above the underlying content.
