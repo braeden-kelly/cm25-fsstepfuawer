@@ -93,6 +93,8 @@ At this point, navigating to an exhibit from the home tab should still be moving
 🏃**Try it** Entering an exhibit from either tab should keep you in that tab. That's because the `exhibits/[exhibitName]` is in _both tabs_, and Expo Router is picking the nearest matching route.
 
 ### Route precedence
+When Expo Router is resolving a url, and two routes match that url, it has to have rules in order to pick one. Of course it needs to match what's actually in the URL.
+
 Try going to an exhibit, copying the URL, and opening it in another tab. Which tab (in your layout) is selected? When navigating to the deep link fresh, it'd make more sense if it took you inside the Exhibits tab, since the Home tab is just random stuff and going "back" from there wouldn't make much sense. We have one form of precedence here- array syntax order! The first matching route will be the one that's first in the route group array.
 
 6. Rename **(home,exhibits)** to **(exhibits,home)**
@@ -156,7 +158,7 @@ We want there to basically be two ways to access `/works/[workId]`:
 1. When you're logged in and browsing, as a modal on top of the tab layout.
 2. When you're receiving a direct link, as its own separate fullscreen layout.
 
-This is where _route groups_ can help. They let us define what is in essance the same URL (as far as the user is concerned) in multiple places:
+This is another place _route groups_ can help. Besides making the same URL work in different tabs, they can make the same URL work in completely different parts of the app:
 - `app/(app)/works/[workId]` has an outward-facing URL of `/works/[workId]`
 - `app/(otherway)/works/[workId]` _also_ has an outward-facing URL of `/works/[workId]`
 
@@ -180,10 +182,10 @@ export default WorkIdScreen;
 
 Now try the scenario we've been talking about this whole time, where you share the link to a work of art with someone else. Go back through the entry point, open a work of art, copy the URL and open it in another tab. Does it go to the `(direct)` version or the original?
 
-### Route precedence
-When Expo Router is resolving a url, and two routes match that url, it has to have rules in order to pick one. Of course it needs to match what's actually in the URL (e.g., whatever it picks needs to have `works` and `[workId]` in that order, though groups don't count against the matching and could be in-between those).
+### Route precedence, again.
 
-In the future, other resolution methods may be available, but currently, Expo Router uses alphabetical order to break ties between route groups.
+
+We once again have the same URL that could use two different routes. Expo Router needs to figure out which one to use when. In this case, Expo Router uses alphabetical order to break ties between route groups.
 
 `/works/[workId]` matches both:
 - `(app)/works/[workId]`, and
@@ -439,7 +441,7 @@ export default function WorkScreen() {
 
 ## Exercise 1b: Of `initialRouteName`'s and `Redirect`'s
 
-I take it back - we're going to fix the logged-in behavior of what we just did to _really_ match Instagram, which either shows you the post-only view when you're logged out, or takes you right into the post as if you're logged in, with you feed underneath.
+Now that we always have the direct link version of the works page working, let's make it _really_ match Instagram, which either shows you the post-only view when you're logged out, or takes you right into the post as if you're logged in, with you feed underneath.
 
 It really, really helps to understand something important about `initialRouteName` at this point: _it only applies to when you first load up the app/website_. It's simply a mechanism to ensure that a deep link into the app pushes whatever routes need to be underneath the deep link's screen onto the history.
 
