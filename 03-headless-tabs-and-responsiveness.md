@@ -253,7 +253,7 @@ With just a little bit of extra Nativewind magic, we can turn those regular smal
 ```
 
 ## See the solution
-[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/3)
+[Solution PR](https://github.com/keith-kurak/expo-router-codemash-2025-starter/pull/3)
 
 ## Next exercise
 [Module 04](04-shared-routes.md)

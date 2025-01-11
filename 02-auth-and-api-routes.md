@@ -29,7 +29,7 @@ We can add this protection inside **(app)/_layout.tsx**. When you navigate withi
 
 Meanwhile, `login` route will attempt to navigate back to `(app)` once login is successful. This causes the layout to be rendered again. This time, the layout detects that the user has a valid auth token, and proceeds with rendering the child route.
 
-### Lock the door (kick out logged-out users)
+### Lock the door (kick out logged-out users ... that's everyone right now)
 1. Create a **login.tsx** file inside of **app**. You can copy the code from our [login.tsx starter here](/files/02/login.tsx).
 2. In **app/(app)/_layout.tsx**, add a conditional to redirect if `authToken` is not set:
 
@@ -101,7 +101,7 @@ Don't forget to `import { useRouter } from "expo-router";`
 
 `replace` removes history from the stack and ensures that you can't go back with a back button or swipe gesture.
 
-🏃**Try it:** Log in and log out a few times. It should feel like an actual login workflow.
+🏃**Try it:** Log in and log out a few times. The logout button is on the Profile tab, and just clears out the auth token from local storage. It should feel like an actual login workflow.
 
 > [!NOTE]  
 >  The automatic rerender of **app/(app)/_layout.tsx** happens because Jotai hooks react to state changes, which in turn causes our `useAuth` hook to updaet. That's why all logging out needs to do is update the `authToken`.
@@ -182,11 +182,11 @@ export async function GET(request: Request) {
 2. Update **data/hooks/useFavsQuery.ts** to call the new API endpoint:
 ```diff
 export const useFavsQuery = function () {
--  return [];
-+  const { authToken } = useAuth();
-+  const query = useQuery({
-+    queryKey: [`favs`],
-+    queryFn: async () => {
+   const { authToken } = useAuth();
+   const query = useQuery({
+     queryKey: [`favs`],
+     queryFn: async () => {
+-      return [];
 +      const response = await fetch(`/api/works/favs`, {
 +        method: "GET",
 +        headers: {
@@ -207,7 +207,6 @@ export const useFavsQuery = function () {
   ```tsx
 export const useFavsQuery = function () {
   const { authToken } = useAuth();
-  // Queries
   const query = useQuery({
     queryKey: [`favs`],
     queryFn: async () => {
@@ -230,7 +229,7 @@ export const useFavsQuery = function () {
 🏃**Try it:** Fav some artwork. It should show up on the Favorites tab!
 
 ## See the solution
-[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/2)
+[Solution PR](https://github.com/keith-kurak/expo-router-codemash-2025-starter/pull/2)
 
 ## Next exercise
 [Module 03](03-headless-tabs-and-responsiveness.md)

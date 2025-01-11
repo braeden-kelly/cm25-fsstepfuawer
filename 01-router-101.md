@@ -239,7 +239,7 @@ export function useMediaQuery() {
 ```
 
 ## See the solution
-[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/1)
+[Solution PR](https://github.com/keith-kurak/expo-router-codemash-2025-starter/pull/1)
 
 ## Next exercise
 [Module 02](02-api-routes-and-auth.md)

@@ -63,95 +63,118 @@ This is going to affect the `(tabs)/index` and `(tabs)/exhibits` routes, so lets
 + <TabTrigger name="index" href="/(home)" asChild>
 ```
 
-🏃**Try it** Move around between Home and exhibits. Some stuff is probably working, but it probably looks odd sometimes (extra headers on exhibits??) and doesn't really go to all the right places. In particular, going to an Exhibit from Home and then using the back header button looks off.
+🏃**Try it** Move around between Home and exhibits. Hopefully a) it works, and b) it's not any worse than before.
 
-4. Let's start sharing route information by sharing a layout between `home` and `exhibits`. Move **(tabs)/(exhibits)/exhibits/_layout.tsx** to a new folder, **(tabs)/(home,exhibits)**. Then add a second stack screen to make sure we're hiding the header whenever we're at the `exhibits` index:
+4. We want to share the `exhibits/[exhibitName]` route (and nothing else!) between the two tabs. So, let's do that. Create a new folder, **(tabs)/(home,exhibits)**, and create an **exhibits** folder under that. Move **[exhibitName].tsx** to **(tabs)/(home,exhibits)/exhibits**.
+
+🏃**Try it** Navigate to an exhibit from both Home and the Exhibits tabs. Notice only one of these works...
+
+5. The navigation from the Home tab doesn't work because we haven't told Expo Router that `(home)` is now a stack. Create the **(tabs)/(home)/_layout.tsx** file with the following contents:
+
 ```tsx
-<Stack.Screen
-  name="exhibits/index"
-  options={{
-    headerShown: false,
-  }}
-/>
+import React from "react";
+import { Stack } from "expo-router";
+
+export default function StackLayout() {
+  return <Stack />;
+}
 ```
 
-🏃**Try it** The array synxtax of the route shares this layout whether you're inside the `(home)` or `(exhibits)` group, meaning that `exhibits` should not show an extra unwanted header bar no matter how we enter it.
+🏃**Try it** OK, I know it looks wrong, but does it work right? Going from Home to an exhibit and back again should take you back home. This is a big milestone!
 
-<!--TODO: this may not be a good lesson above because it may depend on what's underneath it. Need to test!-->
+6. The reason for those extra headers is quite simple. In the Home stack, we haven't hidden the headers. Add a reference to the index screen in **(tabs)/(home)/_layout.tsx**, hiding the header:
 
-### Stacking up right: staying in your tab
-At this point, navigating to an exhibit from the home tab should still be moving you over to the Exhibits tab. That's because `exhibits/[exhibitName]` is only under `(exhibits)`. We need it to be under both `(home)` and `(exhibits)` in order to stay within the tab where you entered the route from.
-
-5. Move **(app)/(tabs)/(exhibits)/exhibits** (and all of its contents) to **(home,exhibits)**.
-
-6. If you tried it just now, you might get an error about duplicate tab triggers, because `/exhibits` is now inside of `/(home)`. Update **app(app)/(tabs)/_layout.tsx** to account for the new home for the exhibits tab route:
 ```diff
-- <TabTrigger name="exhibits" href="/exhibits" asChild>
-+ <TabTrigger name="exhibits" href="/(exhibits)" asChild>
+export default function StackLayout() {
+-  return <Stack />;
++  return <Stack>
++    <Stack.Screen
++      name="index"
++      options={{
++        headerShown: false,
++      }}
++    />
++  </Stack>
+}
+
 ```
 
-🏃**Try it** Entering an exhibit from either tab should keep you in that tab. That's because the `exhibits/[exhibitName]` is in _both tabs_, and Expo Router is picking the nearest matching route.
+🏃**Try it** No headers! Woo
 
-### Route precedence
+~~### Route precedence
 When Expo Router is resolving a url, and two routes match that url, it has to have rules in order to pick one. Of course it needs to match what's actually in the URL.
 
 Try going to an exhibit, copying the URL, and opening it in another tab. Which tab (in your layout) is selected? When navigating to the deep link fresh, it'd make more sense if it took you inside the Exhibits tab, since the Home tab is just random stuff and going "back" from there wouldn't make much sense. We have one form of precedence here- array syntax order! The first matching route will be the one that's first in the route group array.
 
 6. Rename **(home,exhibits)** to **(exhibits,home)**
 
-🏃**Try it** Entering an exhibit, copy the URL, and open it in a new browser tab. It should always be inside the Exhibits tab. But what about the back button?
+🏃**Try it** Entering an exhibit, copy the URL, and open it in a new browser tab. It should always be inside the Exhibits tab. But what about the back button?~~
+(this doesn't seem to be an issue anymore!)
 
 ### `initialRouteName`
+Try navigating to an exhibit and refreshing the page. It deep-links to the exhibit, which is great, but where's the back button? 
+
 We want a back button to show up whenever we deep link to an exhibit, and it should take you back to exhibits. Whenever you start at a deep link and don't see a back button, you should suspect it's related to setting `initialRouteName` somewhere.
 
-7. In **(tabs)/(exhibits,home)/_layout.tsx**, update the `unstable_settings` to set the initial route to `exhibits/index` whenever you enter through the `(exhibits)` group (a mouthful!):
+Here's the snippet of code you want... somewhere:
+
 ```tsx
 export const unstable_settings = {
-  initialRouteName: "index",
   exhibits: {
     initialRouteName: "exhibits/index",
   },
 };
 ```
 
-🏃**Try it** Things should be looking pretty good by now, whether you're navigating around or deep-linking to an exhibit.
+This means that "when you're in the `(exhibits)` group, the initial route should be `exhibits/index`, even if you start on a different page.
 
-> [!TIP]
-> the `exhibits` key in `unstable_settings` refers to the `(group)`, while the `initialRouteName` inside that key refers to the actual route. This is a little confusing, which is why this is considered "unstable" (we're looking into better ways to express complex relationships like these).
+7. Try putting this snippet in **(exhibits)/exhibits/_layout.tsx**. This makes some sense, as you're in the Exhibits stack when this is needed.
 
-### Wait a minute! A mini-routing challenge
+🏃**Try it** Does it work? A bit of a bummer, but makes some sense, as the rest of the stack isn't here.
 
-You might be noticing something fishy about this solution. There's an empty **(exhibits)** folder, but everything _seems_ to work. At some level, that makes sense, because Exhibits are shared between Home and Exhibits, with Home having the unique Home screen...right?
+8. Try putting this snippet closer to the rest of the stack, inside a new **(home,exhibits)/_layout.tsx**.
 
-All _legal_ routes work, but how about illegal routes. Can you break this layout? See if you can figure out what's wrong before using the hint and answer below.
+🏃**Try it** What's that error?
 
-<details>
-  <summary>Expand to see a hint</summary>
+Yeah, so you can only have one layout per route. The route group folder shares layout between the `(home)` and `(exhibits)` routes, so now you have duplicate routes :-/
 
-  Try going directly to `localhost:8081/(home)/exibits`
-</details>
+So... let's put all the layout in the route group folder!
 
-<details>
-  <summary>Expand to see the answer</summary>
-  
-  We got a little greedy when copying over all of the contents of **exhibits** to the shared route. `exhibits/index` (the list of all exhibits) is _not_ shared with the Home tab. Move **exhibits/index.tsx** to **(exhibits)**.
+9. Mentally merge the separate `(home)` and `(exhibits)` layouts together into a single layout in **(home,exhibits)/_layout.tsx**. It will look like this:
 
-  Maybe it's not likely someone would attempt to access this route, but it's good to know that route groups can be specifically navigated to, even though they are not considered part of the URL. This is why they can be used in links, redirects, etc.
+```tsx
+import React from "react";
+import { Stack } from "expo-router";
 
-  BUT...notice anything else funny? Try navigating to the Exhibits tab and look at the URL.
-</details>
+export const unstable_settings = {
+  exhibits: {
+    initialRouteName: "exhibits/index",
+  },
+};
 
-<details>
-  <summary>Expand to see the even better answer! (but check the first answer first)</summary>
-  
-  The first answer worked because our `TabTrigger` in **(tabs)/_layout.tsx** was pointing to `(exhibits)`, but that doesn't change the URL, which means you can't deep link to the Exhibits tab anymore.
+export default function StackLayout() {
+  return (
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="exhibits/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack>
+  );
+}
+```
 
-  How to fix that:
-  1. Move **(exhibits)/index.tsx** to **(exhibits)/exhibits/index.tsx** (this makes `/exhibits` a real route again).
-  2. Update the Exhibits `TabTrigger` in **(tabs)/_layout.tsx** so `href` is equal to `(exhibits)/exhibits`.
+10. Delete **(home)/_layout.tsx** and **(home)/_layout.tsx**.
 
-  Even though this was quite a roundabout way to get to the correct routes, what's notable is that when you consider just the non-group routes (e.g., stuff that should appear in the URL), everything lines up: we have an `/exhibits`, `/exhibits/[exhibitName]` under `(home)`, and an `/exhibits/[exhibitName]` under `(exhibits)`.
-</details>
+🏃**Try it** Go from Home to an exhibit, from Exhibits to an exhibit, refresh the page. Hopefully it looks good and you can use the back buttons whenever you need to.
 
 ## Exercise 2: Instagram-style "public post" page
 We want there to basically be two ways to access `/works/[workId]`:
@@ -469,7 +492,9 @@ Recall earlier that, before you added the `(1-direct)` route, that a direct link
 }
 ```
 
-3. Oh wait, see those red squiggles? This API isn't _quite_ available yet ([so close!](https://github.com/expo/expo/pull/32847)). I expect you'll be able to use the `Redirect` component soon for this. For now you can do it like this, it's about the same. Maybe you lose 1 tick in performance:
+~~3. Oh wait, see those red squiggles? This API isn't _quite_ available yet ([so close!](https://github.com/expo/expo/pull/32847)). I expect you'll be able to use the `Redirect` component soon for this. For now you can do it like this, it's about the same. Maybe you lose 1 tick in performance:~~
+
+This is equivalent to using the imparative API in this way:
 
 ```tsx
   const router = useRouter();
@@ -485,7 +510,7 @@ Recall earlier that, before you added the `(1-direct)` route, that a direct link
 🏃**Try it** If you're logged in, now reloading the page on a work will take you to the same place you were, and everything works as before!
 
 ## See the solution
-[Solution PR](https://github.com/keith-kurak/expo-router-london-2024-starter/pull/4)
+[Solution PR](https://github.com/keith-kurak/expo-router-codemash-2025-starter/pull/4)
 
 ## Next exercise
 [Exercise 5](05-router-side-quests.md)
