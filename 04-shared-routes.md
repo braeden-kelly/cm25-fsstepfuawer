@@ -205,8 +205,7 @@ export default WorkIdScreen;
 
 Now try the scenario we've been talking about this whole time, where you share the link to a work of art with someone else. Go back through the entry point, open a work of art, copy the URL and open it in another tab. Does it go to the `(direct)` version or the original?
 
-### Route precedence, again.
-
+### Route precedence.
 
 We once again have the same URL that could use two different routes. Expo Router needs to figure out which one to use when. In this case, Expo Router uses alphabetical order to break ties between route groups.
 
