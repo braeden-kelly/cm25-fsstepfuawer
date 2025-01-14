@@ -68,6 +68,10 @@ One neat thing about headless tabs is that the "triggers" (what defines the scre
 </Tabs>
 ```
 
+### Solution
+
+Check the `hide-tab-bars-new` branch.
+
 ## Conditionally render tabs: React Navigation edition (after Module 01)
 
 This one's a little trickier. You may need to play with the styles to get it to look OK.
