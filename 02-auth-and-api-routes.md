@@ -82,7 +82,7 @@ export default function LoginScreen() {
         setText={setPassword}
         isSecure
       />
-      <Pressable
+      <Button
         onPress={async () => {
           await login(email, password);
 +          router.replace('/(app)');
