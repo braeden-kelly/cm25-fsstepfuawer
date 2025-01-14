@@ -16,6 +16,6 @@ npx uri-scheme exp://[your computer's ip address]:8081/--/works/137259
 ## Module 04
 
 ### Native Bottom tabs
-Doing headless for web and [native bottom tabs](https://okwasniewski.github.io/react-native-bottom-tabs/docs/getting-started/quick-start.html) would be the perfect pairing (development build required)
+Doing headless for web and [native bottom tabs](https://github.com/callstackincubator/react-native-bottom-tabs) would be the perfect pairing (development build required)
 
 ## Other
